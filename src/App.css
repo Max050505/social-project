@@ -1,0 +1,25 @@
+#root {
+  
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+.nav__link {
+  font-size: large;
+  padding: 3px;
+  background-color: rgb(79, 128, 190);
+  color: rgb(210, 238, 53);
+  text-decoration: none;
+ display: inline-block;
+  box-shadow: inset 2px 2px 0 0 #9c9a9a;
+  border-radius: 4px;
+}
+.nav__link:hover{
+ text-decoration: none;
+ color: rgb(175, 192, 79);
+ background-color: rgb(115, 148, 190);
+}
+.nav__link:active{
+  transform: scale(0.95);
+}
