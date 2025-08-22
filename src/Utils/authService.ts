@@ -1,11 +1,13 @@
-import { auth } from "../firebase";
+import { auth} from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onIdTokenChanged,
   onAuthStateChanged,
+ 
 } from "firebase/auth";
+
 
 export const registerUser = async (email: string, password: string) => {
   return await createUserWithEmailAndPassword(auth, email, password);
@@ -46,3 +48,4 @@ export const currentUser = async (): Promise<null | {
     });
   });
 };
+

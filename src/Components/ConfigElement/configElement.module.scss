@@ -1,0 +1,30 @@
+.container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    h2{
+        display: flex;
+        font-size: 2rem;
+        justify-content: center;
+    }
+    .name{
+        text-align: left;
+        font-family:'Courier New', Courier, monospace ;
+    }
+    .avatar{
+        width: 120%;
+        background-color:rgb(233, 232, 230);
+        cursor: alias;
+        border-radius: 1rem;
+        padding: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: start;
+    }
+    .avatarImage{
+        border-radius: 9999px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+}

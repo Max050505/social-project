@@ -1,0 +1,114 @@
+.mainBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+ 
+ 
+
+.secondBar{
+  width: 100%;
+  height: 100vh;
+
+  box-shadow: 0 4px 16px rgba(0,0,0,1);
+  overflow: hidden;
+  padding: 1rem;
+  box-sizing: border-box;
+
+}
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    
+
+    .title {
+      color: rgba(1, 83, 108, 1);
+      font-weight: bold;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .titleDark {
+      color: rgb(203, 207, 207);
+      font-weight: bold;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mainLogoStyle{
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 9999px;
+      object-fit: cover;
+    }
+    .line {
+      width: 100%;
+      height: 2px;
+      background: #290d0d;
+      background: radial-gradient(
+        circle,
+        rgba(41, 13, 13, 0.56) 59%,
+        rgba(160, 171, 173, 0.21) 87%
+      );
+    }
+    .lineDark {
+      width: 100%;
+      height: 2px;
+      background: #290d0d;
+      background: radial-gradient(
+        circle,
+        rgba(248, 248, 248, 0.56) 59%,
+        rgba(243, 247, 248, 0.219) 87%
+      );
+    }
+    .person{
+      display: flex;
+      align-items: center;
+      p {
+        font-size: 10px;
+      }
+    }
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      gap: 2rem;
+      padding: 0;
+      width: 80%;
+      flex-wrap: nowrap;
+
+      li {
+        display: flex;
+        align-items: baseline;
+        list-style-type: none;
+        gap: 0.75rem;
+        .logoStyle{
+          height: 2.5cap;
+          aspect-ratio: 1;
+          object-fit: contain;
+          width: 2.5cap;
+        }
+        .link {
+          text-decoration: none;
+          font-size: 1rem;
+          display: flex;
+          gap: 0.3rem;
+        }
+        .light {
+          color: #000000;
+        }
+        .dark {
+          color: #ffffff;
+        }
+        img{
+          border-radius: 100%;
+        }
+      }
+    }
+  }
+}

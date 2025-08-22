@@ -8,6 +8,8 @@ import RegistrationPage from "./Pages/RegistrationPage";
 import AuthenticationPage from "./Pages/AuthenticationPage";
 import WelcomePage from "./Pages/WelcomePage";
 import "./App.css";
+import SocialPage from "./Pages/SocialPage";
+import ConfigPage from "./Pages/ConfigPage";
 
 const router = createBrowserRouter([
   {
@@ -20,10 +22,22 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/welcome',
-    element:<WelcomePage/>,
-    id:'welcome',
-  }
+    path:'/welcome',
+    element:<SocialPage/>,
+    id:'social',
+    children:[
+      {
+        index: true,
+        element:<WelcomePage/>,
+        id:'welcome',
+      },
+      {
+        path:'config',
+        element:<ConfigPage/>,
+        id:'config',
+      }
+    ]
+  },
 ]);
 function App(): JSX.Element {
   useEffect(() => {
