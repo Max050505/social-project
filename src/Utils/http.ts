@@ -13,7 +13,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, listAll, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase";
 import { db } from "../firebase";
 export const queryClient = new QueryClient();
@@ -151,7 +151,40 @@ export function useAvatarAdd() {
       const storageRef = ref(storage, `images/Avatar/${user.uid}/${file.name}`);
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
+      await setDoc(doc(db, 'avatars', user.uid ), {
+        storageRef,
+        downloadURL,
+        uploadedAt: serverTimestamp,
+      })
       return { snapshot, downloadURL };
     },
+  });
+}
+
+export function useLoadingAvatar() {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  return useQuery({
+    queryKey: ["avatar", user?.uid],
+    queryFn: async () => {
+      if (!user) throw new Error("No user!");
+      const avatarRef= ref(storage, `images/Avatar/${user?.uid}/`);
+      const res = await listAll(avatarRef);
+
+      const sortedItems = res.items.sort((a: StorageReference, b:StorageReference) => {
+        if (a.name > b.name){
+          return -1;
+        }
+        if (a.name < b.name){
+          return 1;
+        }
+        return 0;
+      })
+      const lastAddFile = sortedItems[0];
+      const url = await getDownloadURL(lastAddFile);
+      return url;
+
+    },
+    enabled: !!user,
   });
 }

@@ -5,6 +5,7 @@ import {
   useAvatarAdd,
   useChangeEmail,
   useChangePassword,
+  useLoadingAvatar
 } from "../../Utils/http";
 import style from "./configElement.module.scss";
 import {
@@ -14,7 +15,7 @@ import {
 } from "firebase/auth";
 import { useEffect, useRef } from "react";
 import { auth } from "../../firebase";
-import { fetchName, fetchEmail } from "../../store/nameAction";
+import { fetchName} from "../../store/nameAction";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch,  RootState} from "../../store";
 import { useAuthReady } from "../../Utils/useAuthChanged";
@@ -39,12 +40,12 @@ export default function ChangePasswordAndEmail() {
   useEffect(() => {
     console.log("Dispatching fetchEmail and fetchName");
     if (authReady) {
-      dispatch(fetchEmail());
       dispatch(fetchName());
     }
   }, [dispatch, authReady]);
-  const emailUser = useSelector((state: RootState) => state.email);
-  const fullNameUser = useSelector((state: RootState) => state.name);
+ 
+  const {firstName, lastName} = useSelector((state:RootState) => state.name)
+  const email = useSelector((state:RootState) => state.email)
   const changeEmail = useChangeEmail();
   const changePassword = useChangePassword();
 
@@ -55,6 +56,7 @@ export default function ChangePasswordAndEmail() {
     fileInputRef.current?.click();
   };
 
+  const showAvatar = useLoadingAvatar();
   const handleFileChange = async (e: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -107,8 +109,7 @@ export default function ChangePasswordAndEmail() {
         <Image
           className={style.avatarImage}
           src={
-            avatarAdd.data?.downloadURL ||
-            auth.currentUser?.photoURL ||
+            showAvatar.data ||
             "https://placehold.co/100x100?text=No+Image"
           }
           alt="avatar"
@@ -118,8 +119,8 @@ export default function ChangePasswordAndEmail() {
           onClick={handleImageClick}
         />
         <div className={style.name}>
-          <p>{emailUser || "noEmail"}</p>
-          <p>{fullNameUser || " no Name"}</p>
+          <p>{firstName} {lastName}</p>
+          <p>{email || " no Name"}</p>
         </div>
 
         <input

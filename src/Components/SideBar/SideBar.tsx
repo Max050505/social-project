@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Image } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
-import { logOut } from "../../Utils/http";
+import { logOut, useLoadingAvatar } from "../../Utils/http";
 import style from "./SideBar.module.scss";
 import { ConfigProvider, Switch, Layout } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -11,23 +11,26 @@ import { logos } from "../../UI/logo";
 import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useAuthReady } from "../../Utils/useAuthChanged";
-import { fetchName, fetchEmail } from "../../store/nameAction";
+import { fetchName } from "../../store/nameAction";
+import Modal from "../../UI/Modal";
 const SideBar = () => {
   const [isDark, setIsDark] = useState(false);
   const [photoURL, setPhotoURL] = useState<string | null>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authReady = useAuthReady();
+  const showAvatar = useLoadingAvatar();
   useEffect(() => {
     console.log("Dispatching fetchEmail and fetchName");
     if (authReady) {
-      dispatch(fetchEmail());
       dispatch(fetchName());
     }
   }, [dispatch, authReady]);
-  const emailUser = useSelector((state: RootState) => state.email);
-  const fullNameUser = useSelector((state: RootState) => state.name);
+
+  const { firstName, lastName } = useSelector((state: RootState) => state.name);
+  const email = useSelector((state: RootState) => state.email);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -36,13 +39,23 @@ const SideBar = () => {
     return () => unsub();
   }, []);
   const logout = logOut();
-  const loginOut = async () => {
+  const handleLogoutClick = () => {
+    console.log("🔘 Logout clicked");
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
     try {
       await logout.mutateAsync();
       navigate("/");
     } catch (err) {
       console.log("Try again, accur some problem with logout");
     }
+    setShowLogoutModal(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
   return (
     <ConfigProvider
@@ -178,23 +191,21 @@ const SideBar = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/"
+                <button
                   className={`${isDark ? style.dark : style.light} ${
                     style.link
                   }`}
-                  type="button"
-                  onClick={loginOut}
+                  onClick={handleLogoutClick}
                 >
                   <Image
                     src={logos[10].image}
                     alt={logos[10].alt}
                     preview={false}
                     className={style.logoStyle}
-                    onClick={loginOut}
+
                   />
                   Logout
-                </NavLink>
+                </button>
               </li>
             </ul>
 
@@ -208,39 +219,95 @@ const SideBar = () => {
                   } ${style.person}`}
                 >
                   <Image
-                    src={photoURL ?? "avatar"}
+                    src={showAvatar.data ?? "avatar"}
                     alt="avatar"
                     preview={false}
                     width={60}
                     height={60}
                   />
                   <div>
-                    <p>{emailUser}</p>
-                    <p>{fullNameUser}</p>
+                    <p>
+                      {firstName} {lastName}
+                    </p>
+                    <p>{email}</p>
                   </div>
                 </NavLink>
               </li>
             </ul>
-            <ConfigProvider
-              theme={{
-                components: {
-                  Switch: {
-                    handleBg: "#ffffff",
-                    colorPrimary: "#515151",
+            <div className="sunMoon">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Switch: {
+                      handleBg: "#ffffff",
+                      colorPrimary: "#515151",
+                    },
                   },
-                },
-              }}
-            >
-              <Switch
-                checked={isDark}
-                className={style.custom_switch}
-                size="small"
-                onChange={(checked) => setIsDark(checked)}
-              />
-            </ConfigProvider>
+                }}
+              >
+                {isDark ? (
+                  <Image
+                    src={logos[12].image}
+                    alt={logos[12].alt}
+                    preview={false}
+                    width={15}
+                    height={15}
+                    className={style.logoStyle}
+                  />
+                ) : (
+                  <Image
+                    src={logos[11].image}
+                    alt={logos[11].alt}
+                    preview={false}
+                    width={15}
+                    height={15}
+                    className={style.logoStyle}
+                  />
+                )}
+
+                <Switch
+                  checked={isDark}
+                  className={style.custom_switch}
+                  size="small"
+                  onChange={(checked) => setIsDark(checked)}
+                />
+                {isDark ? (
+                  <Image
+                    src={logos[14].image}
+                    alt={logos[14].alt}
+                    width={15}
+                    height={15}
+                    preview={false}
+                    className={style.logoStyle}
+                  />
+                ) : (
+                  <Image
+                    src={logos[13].image}
+                    alt={logos[13].alt}
+                    width={15}
+                    height={15}
+                    preview={false}
+                    className={style.logoStyle}
+                  />
+                )}
+              </ConfigProvider>
+            </div>
           </div>
         </Sider>
       </Layout>
+
+      {showLogoutModal && (
+        <Modal onClose={cancelLogout}>
+          <div className={style.modal}>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className={style.buttons} style={{}}>
+              <button onClick={confirmLogout}>Logout</button>
+              <button onClick={cancelLogout}>Cancel</button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </ConfigProvider>
   );
 };

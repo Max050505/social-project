@@ -1,7 +1,6 @@
 
-import { useNavigate } from "react-router-dom";
+
 const WelcomePage = () => {
-  const navigate = useNavigate();
 
   return (
     <>
