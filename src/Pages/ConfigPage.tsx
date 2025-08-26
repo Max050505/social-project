@@ -1,7 +1,13 @@
-import ChangePasswordAndEmail from "../Components/ConfigElement/ChangePasswordAndEmail";
-export default function ConfigPage() {
+import ConfigElement from "../Components/ConfigElement/ConfigElement";
 
+
+export default function ConfigPage() {
   return (
-   <ChangePasswordAndEmail/>
+    <>
+      <div>
+        <ConfigElement/>
+      
+      </div>
+    </>
   );
 }

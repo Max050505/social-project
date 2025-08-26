@@ -5,11 +5,11 @@ import {
   singOutUser,
   currentUser,
 } from "./authService";
+import { auth } from '../firebase';
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import {
   getAuth,
   updatePassword,
-  updateEmail,
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
@@ -61,7 +61,6 @@ export const sendName = () => {
       lastName: string;
       email: string;
     }) => {
-      const auth = getAuth();
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
       const userDocRef = doc(db, "UsersName", user.uid);
@@ -87,11 +86,6 @@ export const sendName = () => {
   });
 };
 
-interface ChangeEmail {
-  oldEmail: string;
-  password: string;
-  newEmail: string;
-}
 
 interface ChangePassword {
   email: string;
@@ -103,7 +97,6 @@ export const useChangePassword = () => {
   return useMutation({
     mutationFn: async ({ email, oldPassword, newPassword }: ChangePassword) => {
       try {
-        const auth = getAuth();
         const user = auth.currentUser;
         if (!user) throw new Error("No authenticated user");
         const credential = EmailAuthProvider.credential(email, oldPassword);
@@ -121,26 +114,33 @@ export const useChangePassword = () => {
   });
 };
 
-export function useChangeEmail() {
+interface ChangeName{
+  firstName: string,
+  lastName: string
+}
+
+export const useChangeName = () => {
   return useMutation({
-    mutationFn: async ({ oldEmail, password, newEmail }: ChangeEmail) => {
+    mutationFn: async ({ firstName, lastName }: ChangeName) => {
       try {
-        const auth = getAuth();
         const user = auth.currentUser;
-        if (!user) throw new Error("No authenticated user");
-        const credential = EmailAuthProvider.credential(oldEmail, password);
-        await reauthenticateWithCredential(user, credential);
-        console.log("user.email:", user?.email);
-        console.log("password:", password);
-        console.log("newEmail:", newEmail);
-        return await updateEmail(user, newEmail);
-      } catch (err: any) {
-        const message = err?.code || err?.message || "auth/email-update-failed";
+        if (!user) {
+          throw new Error("No authenticated user");
+        }
+        const userDocRef = doc(db, "UsersName", user.uid);
+        await setDoc(
+          userDocRef,
+          { firstName, lastName },
+          { merge: true }
+        );
+        return { firstName, lastName };
+      } catch (error: any) {
+        const message = error?.code || error?.message || "name-update-failed";
         throw new Error(message);
       }
     },
   });
-}
+};
 
 export function useAvatarAdd() {
   return useMutation({
@@ -152,9 +152,9 @@ export function useAvatarAdd() {
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       await setDoc(doc(db, 'avatars', user.uid ), {
-        storageRef,
+       
         downloadURL,
-        uploadedAt: serverTimestamp,
+        uploadedAt: serverTimestamp(),
       })
       return { snapshot, downloadURL };
     },
@@ -162,7 +162,6 @@ export function useAvatarAdd() {
 }
 
 export function useLoadingAvatar() {
-  const auth = getAuth();
   const user = auth.currentUser;
   return useQuery({
     queryKey: ["avatar", user?.uid],
@@ -188,3 +187,20 @@ export function useLoadingAvatar() {
     enabled: !!user,
   });
 }
+
+export async function fetchAvatarByUid(uid: string): Promise<string> {
+  const avatarRef = ref(storage, `images/Avatar/${uid}/`);
+  const res = await listAll(avatarRef);
+
+  const sortedItems = res.items.sort((a, b) => {
+    if (a.name > b.name) return -1;
+    if (a.name < b.name) return 1;
+    return 0;
+  });
+
+  const lastAddedFile = sortedItems[0];
+  if (!lastAddedFile) throw new Error("No avatar files found");
+
+  return await getDownloadURL(lastAddedFile);
+}
+

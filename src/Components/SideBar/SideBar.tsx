@@ -2,20 +2,19 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Image } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
-import { logOut, useLoadingAvatar } from "../../Utils/http";
+import { logOut, queryClient, useLoadingAvatar, fetchAvatarByUid } from "../../Utils/http";
 import style from "./SideBar.module.scss";
 import { ConfigProvider, Switch, Layout } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useEffect, useState } from "react";
 import { logos } from "../../UI/logo";
-import { auth } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { useAuthReady } from "../../Utils/useAuthChanged";
 import { fetchName } from "../../store/nameAction";
 import Modal from "../../UI/Modal";
+import type { LoaderFunctionArgs } from "react-router-dom";
+
 const SideBar = () => {
   const [isDark, setIsDark] = useState(false);
-  const [photoURL, setPhotoURL] = useState<string | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -32,12 +31,6 @@ const SideBar = () => {
   const { firstName, lastName } = useSelector((state: RootState) => state.name);
   const email = useSelector((state: RootState) => state.email);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setPhotoURL(user?.photoURL ?? null);
-    });
-    return () => unsub();
-  }, []);
   const logout = logOut();
   const handleLogoutClick = () => {
     console.log("🔘 Logout clicked");
@@ -191,7 +184,7 @@ const SideBar = () => {
                 </NavLink>
               </li>
               <li>
-                <button
+                <div
                   className={`${isDark ? style.dark : style.light} ${
                     style.link
                   }`}
@@ -202,10 +195,9 @@ const SideBar = () => {
                     alt={logos[10].alt}
                     preview={false}
                     className={style.logoStyle}
-
                   />
                   Logout
-                </button>
+                </div>
               </li>
             </ul>
 
@@ -298,10 +290,11 @@ const SideBar = () => {
 
       {showLogoutModal && (
         <Modal onClose={cancelLogout}>
+
           <div className={style.modal}>
-            <h3>Confirm Logout</h3>
+            <h3>Confirm Logout </h3>
             <p>Are you sure you want to logout?</p>
-            <div className={style.buttons} style={{}}>
+            <div >
               <button onClick={confirmLogout}>Logout</button>
               <button onClick={cancelLogout}>Cancel</button>
             </div>
@@ -313,3 +306,13 @@ const SideBar = () => {
 };
 
 export default SideBar;
+
+
+export function loader({params}: LoaderFunctionArgs){
+  const uid = params.user;
+  if (!uid) return null;
+  return queryClient.fetchQuery({
+    queryKey: ["avatar", uid],
+    queryFn: () => fetchAvatarByUid(uid)
+  })
+}

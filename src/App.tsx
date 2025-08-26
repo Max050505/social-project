@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, type JSX } from "react";
 import { queryClient } from "./Utils/http";
 import { callIdTokenChange } from "./Utils/authService";
+import { loader as avatarLoad} from './Components/SideBar/SideBar';
 import HomePage from "./Pages/HomePage";
 import RegistrationPage from "./Pages/RegistrationPage";
 import AuthenticationPage from "./Pages/AuthenticationPage";
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
     path:'/welcome',
     element:<SocialPage/>,
     id:'social',
+    loader: avatarLoad,
     children:[
       {
         index: true,

@@ -1,8 +1,14 @@
 .container{
-    width: 100%;
+    width: 50rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    .changes{
+        display: flex;
+        flex-direction: row;
+        
+    }
     h2{
         display: flex;
         font-size: 2rem;
@@ -11,9 +17,10 @@
     .name{
         text-align: left;
         font-family:'Courier New', Courier, monospace ;
+        padding-left: 20px;
     }
     .avatar{
-        width: 120%;
+        width: 80%;
         background-color:rgb(233, 232, 230);
         cursor: alias;
         border-radius: 1rem;

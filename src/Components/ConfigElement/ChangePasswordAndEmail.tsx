@@ -1,31 +1,17 @@
 import CustomInput from "../../UI/Input";
-import { Image } from "antd";
+
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
-import {
-  useAvatarAdd,
-  useChangeEmail,
-  useChangePassword,
-  useLoadingAvatar
-} from "../../Utils/http";
+import { useChangePassword } from "../../Utils/http";
 import style from "./configElement.module.scss";
-import {
-  updateProfile,
-  EmailAuthProvider,
-  linkWithCredential,
-} from "firebase/auth";
-import { useEffect, useRef } from "react";
+import { EmailAuthProvider, linkWithCredential } from "firebase/auth";
 import { auth } from "../../firebase";
-import { fetchName} from "../../store/nameAction";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch,  RootState} from "../../store";
-import { useAuthReady } from "../../Utils/useAuthChanged";
+
 type AuthFormTypes = {
   email: string;
   password: string;
   oldPassword: string;
   newPassword: string;
   oldEmail: string;
-  newEmail: string;
 };
 
 export default function ChangePasswordAndEmail() {
@@ -35,38 +21,8 @@ export default function ChangePasswordAndEmail() {
     formState: { isSubmitting },
     reset,
   } = useForm<AuthFormTypes>();
-  const dispatch = useDispatch<AppDispatch>();
-  const authReady = useAuthReady();
-  useEffect(() => {
-    console.log("Dispatching fetchEmail and fetchName");
-    if (authReady) {
-      dispatch(fetchName());
-    }
-  }, [dispatch, authReady]);
- 
-  const {firstName, lastName} = useSelector((state:RootState) => state.name)
-  const email = useSelector((state:RootState) => state.email)
-  const changeEmail = useChangeEmail();
+
   const changePassword = useChangePassword();
-
-  const avatarAdd = useAvatarAdd();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const showAvatar = useLoadingAvatar();
-  const handleFileChange = async (e: any) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const result = await avatarAdd.mutateAsync({ file });
-
-    if (auth.currentUser && result?.downloadURL) {
-      await updateProfile(auth.currentUser, { photoURL: result.downloadURL });
-    }
-    e.target.value = "";
-  };
 
   const onSubmit: SubmitHandler<AuthFormTypes> = async (data) => {
     try {
@@ -83,17 +39,11 @@ export default function ChangePasswordAndEmail() {
         );
       }
 
-      await changeEmail.mutateAsync({
-        oldEmail: currentEmail,
-        password: hasPasswordProvider ? data.oldPassword : data.newPassword,
-        newEmail: data.email,
-      });
-
-      const latestEmail = auth.currentUser?.email || data.email;
+    
       if (hasPasswordProvider) {
         await changePassword.mutateAsync({
           oldPassword: data.oldPassword,
-          email: latestEmail,
+          email: data.email,
           newPassword: data.newPassword,
         });
       }
@@ -103,35 +53,6 @@ export default function ChangePasswordAndEmail() {
     }
   };
   return (
-    <div className={style.container}>
-      <h2>Edit Profile</h2>
-      <div className={style.avatar}>
-        <Image
-          className={style.avatarImage}
-          src={
-            showAvatar.data ||
-            "https://placehold.co/100x100?text=No+Image"
-          }
-          alt="avatar"
-          width={100}
-          height={100}
-          preview={true}
-          onClick={handleImageClick}
-        />
-        <div className={style.name}>
-          <p>{firstName} {lastName}</p>
-          <p>{email || " no Name"}</p>
-        </div>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-        />
-      </div>
-      <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             control={control}
@@ -178,6 +99,9 @@ export default function ChangePasswordAndEmail() {
               </div>
             )}
           />
+
+          
+          
           <Controller
             control={control}
             name="newPassword"
@@ -204,16 +128,12 @@ export default function ChangePasswordAndEmail() {
 
           <button
             type="submit"
-            disabled={
-              isSubmitting || changeEmail.isPending || changePassword.isPending
-            }
+            disabled={isSubmitting || changePassword.isPending}
           >
-            {isSubmitting || changeEmail.isPending || changePassword.isPending
-              ? "Saving..."
-              : "Save"}
+            {isSubmitting || changePassword.isPending ? "Saving..." : "Save"}
           </button>
         </form>
-      </div>
-    </div>
+
+
   );
 }

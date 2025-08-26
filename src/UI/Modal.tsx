@@ -10,6 +10,7 @@ export default function Modal({ children, onClose }: ModalProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const modal = dialog.current;
+
     try {
       if (modal) {
         modal.showModal();
@@ -18,31 +19,27 @@ export default function Modal({ children, onClose }: ModalProps) {
       console.error("❌ Modal failed to open:", err);
     }
 
-    return () => {
-      modal?.close();
-    };
   }, []);
   return createPortal(
     <dialog
       ref={dialog}
       onClose={onClose}
+      onCancel={onClose}
       style={{
         border: "none",
-        padding: "20px",
-        background: "white",
-        borderRadius: "8px",
-        maxWidth: "400px",
-        zIndex: 9999,
-        margin: "auto",
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
+        borderRadius: '10%',
+        textAlign: "center",
+        zIndex: 10000,
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)"
+      }}
+      onClick={(event) => {
+        if (event.target === dialog.current) {
+          onClose();
+        }
       }}
     >
       {children}
     </dialog>,
-    document.getElementById("modal") || document.body
+    document.body
   );
 }
