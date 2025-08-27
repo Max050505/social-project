@@ -3,7 +3,6 @@ import style from "./AuthForm.module.scss";
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Image } from "antd";
 import CustomInput from "../../UI/Input";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";

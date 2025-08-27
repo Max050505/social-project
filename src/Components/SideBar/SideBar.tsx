@@ -1,39 +1,47 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Image } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
-import { logOut, queryClient, useLoadingAvatar, fetchAvatarByUid } from "../../Utils/http";
+import {
+  logOut,
+  queryClient,
+  useLoadingAvatar,
+  fetchAvatarByUid,
+} from "../../Utils/http";
 import style from "./SideBar.module.scss";
-import { ConfigProvider, Switch, Layout } from "antd";
+import SideBarHiddenButton from "./SideBarHiddenButton";
+import { ConfigProvider, Switch, Layout, Image } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useEffect, useState } from "react";
 import { logos } from "../../UI/logo";
 import { useAuthReady } from "../../Utils/useAuthChanged";
 import { fetchName } from "../../store/nameAction";
 import Modal from "../../UI/Modal";
+import { AnimatePresence, motion } from "framer-motion";
 import type { LoaderFunctionArgs } from "react-router-dom";
 
 const SideBar = () => {
   const [isDark, setIsDark] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [hideSideBar, setHideSideBar] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authReady = useAuthReady();
   const showAvatar = useLoadingAvatar();
   useEffect(() => {
-    console.log("Dispatching fetchEmail and fetchName");
     if (authReady) {
       dispatch(fetchName());
     }
   }, [dispatch, authReady]);
 
+  function handleHideSideBar() {
+    setHideSideBar((prev) => !prev);
+  }
   const { firstName, lastName } = useSelector((state: RootState) => state.name);
   const email = useSelector((state: RootState) => state.email);
 
   const logout = logOut();
   const handleLogoutClick = () => {
-    console.log("🔘 Logout clicked");
     setShowLogoutModal(true);
   };
 
@@ -66,9 +74,32 @@ const SideBar = () => {
       <Layout className={style.mainBar}>
         <Sider
           className={style.secondBar}
-          style={{ width: "25vw", flex: "0 0 25vw", maxWidth: "25vw" }}
+          collapsible
+          collapsed={hideSideBar}
+          collapsedWidth={72}
+          trigger={null}
+          style={{
+            overflow: "hidden",
+            transition: "all 0.3s ease",
+            padding: 0,
+          }}
         >
-          <div className={style.container}>
+          <div className={style.wrap}>
+            <SideBarHiddenButton
+              className={`${isDark ? style.darkbutton : style.lightbutton} ${
+                style.sideBarHiddenButton
+              }`}
+              onClick={handleHideSideBar}
+            >
+              <motion.p
+                transition={{ type: "tween", duration: 0.3 }}
+                animate={{ rotate: hideSideBar ? 180 : 0 }}
+              >
+                &#60;
+              </motion.p>
+            </SideBarHiddenButton>
+          </div>
+          <div className={`${style.container} ${hideSideBar && style.center}`}>
             <h2 className={isDark ? style.titleDark : style.title}>
               <Image
                 src={isDark ? logos[0].image : logos[1].image}
@@ -76,9 +107,9 @@ const SideBar = () => {
                 preview={false}
                 className={style.mainLogoStyle}
               />
-              Social
+              {!hideSideBar && "Social"}
             </h2>
-            <ul>
+            <ul className={`${hideSideBar && style.center}`}>
               <li>
                 <NavLink
                   to="/friends"
@@ -91,7 +122,7 @@ const SideBar = () => {
                       src={logos[4].image}
                       alt={logos[4].alt}
                       preview={false}
-                      className={style.logoStyle}
+                      className={`${style.logoStyle} `}
                     />
                   ) : (
                     <Image
@@ -101,7 +132,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  Friends
+                  {!hideSideBar && "Friends"}
                 </NavLink>
               </li>
               <li>
@@ -127,7 +158,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  My profile
+                  {!hideSideBar && "My profile"}
                 </NavLink>
               </li>
               <li>
@@ -152,12 +183,12 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  Main
+                  {!hideSideBar && "Main"}
                 </NavLink>
               </li>
             </ul>
             <span className={isDark ? style.lineDark : style.line}></span>
-            <ul>
+            <ul className={`${hideSideBar && style.center}`}>
               <li>
                 <NavLink
                   to="config"
@@ -180,7 +211,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  Config
+                  {!hideSideBar && "Config"}
                 </NavLink>
               </li>
               <li>
@@ -196,7 +227,7 @@ const SideBar = () => {
                     preview={false}
                     className={style.logoStyle}
                   />
-                  Logout
+                  {!hideSideBar && "Logout"}
                 </div>
               </li>
             </ul>
@@ -217,12 +248,14 @@ const SideBar = () => {
                     width={60}
                     height={60}
                   />
-                  <div>
-                    <p>
-                      {firstName} {lastName}
-                    </p>
-                    <p>{email}</p>
-                  </div>
+                  {!hideSideBar && (
+                    <div>
+                      <p>
+                        {firstName} {lastName}
+                      </p>
+                      <p>{email}</p>
+                    </div>
+                  )}
                 </NavLink>
               </li>
             </ul>
@@ -237,19 +270,10 @@ const SideBar = () => {
                   },
                 }}
               >
-                {isDark ? (
+                {!hideSideBar && (
                   <Image
-                    src={logos[12].image}
-                    alt={logos[12].alt}
-                    preview={false}
-                    width={15}
-                    height={15}
-                    className={style.logoStyle}
-                  />
-                ) : (
-                  <Image
-                    src={logos[11].image}
-                    alt={logos[11].alt}
+                    src={isDark ? logos[12].image : logos[11].image}
+                    alt={isDark ? logos[12].alt : logos[11].alt}
                     preview={false}
                     width={15}
                     height={15}
@@ -263,19 +287,11 @@ const SideBar = () => {
                   size="small"
                   onChange={(checked) => setIsDark(checked)}
                 />
-                {isDark ? (
+
+                {!hideSideBar && (
                   <Image
-                    src={logos[14].image}
-                    alt={logos[14].alt}
-                    width={15}
-                    height={15}
-                    preview={false}
-                    className={style.logoStyle}
-                  />
-                ) : (
-                  <Image
-                    src={logos[13].image}
-                    alt={logos[13].alt}
+                    src={isDark ? logos[14].image : logos[13].image}
+                    alt={isDark ? logos[14].alt : logos[13].alt}
                     width={15}
                     height={15}
                     preview={false}
@@ -288,31 +304,32 @@ const SideBar = () => {
         </Sider>
       </Layout>
 
-      {showLogoutModal && (
-        <Modal onClose={cancelLogout}>
 
-          <div className={style.modal}>
-            <h3>Confirm Logout </h3>
-            <p>Are you sure you want to logout?</p>
-            <div >
-              <button onClick={confirmLogout}>Logout</button>
-              <button onClick={cancelLogout}>Cancel</button>
+        {showLogoutModal && (
+          <Modal onClose={cancelLogout}>
+            <div className={style.modal}>
+              
+              <h3>Confirm Logout </h3>
+              <p>Are you sure you want to logout?</p>
+              <div>
+                <button onClick={confirmLogout}>Logout</button>
+                <button onClick={cancelLogout}>Cancel</button>
+              </div>
             </div>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
+ 
     </ConfigProvider>
   );
 };
 
 export default SideBar;
 
-
-export function loader({params}: LoaderFunctionArgs){
+export function loader({ params }: LoaderFunctionArgs) {
   const uid = params.user;
   if (!uid) return null;
   return queryClient.fetchQuery({
     queryKey: ["avatar", uid],
-    queryFn: () => fetchAvatarByUid(uid)
-  })
+    queryFn: () => fetchAvatarByUid(uid),
+  });
 }
