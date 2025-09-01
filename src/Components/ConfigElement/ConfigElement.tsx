@@ -1,6 +1,6 @@
-import Avatar from "./Avatar";
-import ChangeName from "./ChangeName";
-import ChangePasswordAndEmail from "./ChangePasswordAndEmail";
+import Avatar from "./Avatar/Avatar";
+import ChangeName from "./ChangeName/ChangeName";
+import ChangePasswordAndEmail from "./ChangePassword/ChangePasswordAndEmail";
 import style from "./configElement.module.scss";
 export default function ConfigElement() {
   return (

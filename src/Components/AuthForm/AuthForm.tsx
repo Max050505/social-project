@@ -36,7 +36,7 @@ const AuthForm = () => {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.3}}
           className={style.image}
         >
           <img className={style.image} src={currentWall}  alt="login-photo" />
@@ -45,7 +45,7 @@ const AuthForm = () => {
           <motion.form
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.3 }}
             onSubmit={handleSubmit(onSubmit)}
           >
             <h2 className={style.title}>Login</h2>

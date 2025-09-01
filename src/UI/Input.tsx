@@ -1,6 +1,7 @@
 import { Input } from "antd";
 import React from "react";
 
+
 type CustomInputType = {
   value: string;
   label?: string;
@@ -12,7 +13,8 @@ type CustomInputType = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: () => void;
   status?: '' | 'error';
-};
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+}
 
 const CustomInput = React.forwardRef<HTMLInputElement, CustomInputType>(
   (
@@ -25,9 +27,9 @@ const CustomInput = React.forwardRef<HTMLInputElement, CustomInputType>(
   onChange,
   onBlur,
   status,
+  onClick,
   ...rest
-  
- }, ref) => {
+  }, ref) => {
 
   return (
     <div>
@@ -42,6 +44,7 @@ const CustomInput = React.forwardRef<HTMLInputElement, CustomInputType>(
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
+          onClick={onClick}
           status={status}
           ref={ref as any}
           {...rest}

@@ -1,4 +1,3 @@
-
 import { auth } from '../firebase';
 import { setFirstName, setLastName } from './nameSlice';
 import { setEmail } from './emailSlice';
@@ -27,17 +26,3 @@ export const fetchName = () => {
     }
   };
 };
-
-// export const fetchEmail = () => {
-//     return async (dispatch: any) => {
-//         const user = auth.currentUser
-//         if (!user) return;
-
-//         const snapshot = await getDoc(doc(db, 'UsersName', user.uid));
-//         if(snapshot.exists()){
-//             const data = snapshot.data() as {email?: string};
-//             const email = data.email ?? '';
-//             dispatch(setEmail(email));
-//         }
-//     }
-// }

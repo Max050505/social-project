@@ -10,6 +10,7 @@ import {
 import style from "./SideBar.module.scss";
 import SideBarHiddenButton from "./SideBarHiddenButton";
 import { ConfigProvider, Switch, Layout, Image } from "antd";
+import { RightOutlined } from "@ant-design/icons";
 import Sider from "antd/es/layout/Sider";
 import { useEffect, useState } from "react";
 import { logos } from "../../UI/logo";
@@ -95,7 +96,7 @@ const SideBar = () => {
                 transition={{ type: "tween", duration: 0.3 }}
                 animate={{ rotate: hideSideBar ? 180 : 0 }}
               >
-                &#60;
+                <RightOutlined />
               </motion.p>
             </SideBarHiddenButton>
           </div>
@@ -278,6 +279,7 @@ const SideBar = () => {
                     width={15}
                     height={15}
                     className={style.logoStyle}
+                    style={{paddingRight: '2px'}}
                   />
                 )}
 
@@ -286,6 +288,7 @@ const SideBar = () => {
                   className={style.custom_switch}
                   size="small"
                   onChange={(checked) => setIsDark(checked)}
+                  
                 />
 
                 {!hideSideBar && (
@@ -296,6 +299,7 @@ const SideBar = () => {
                     height={15}
                     preview={false}
                     className={style.logoStyle}
+                    style={{paddingLeft: '2px'}}
                   />
                 )}
               </ConfigProvider>

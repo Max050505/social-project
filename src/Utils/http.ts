@@ -5,7 +5,7 @@ import {
   singOutUser,
   currentUser,
 } from "./authService";
-import { auth } from '../firebase';
+import { auth } from "../firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import {
   getAuth,
@@ -13,7 +13,13 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { getDownloadURL, listAll, ref, StorageReference, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  listAll,
+  ref,
+  StorageReference,
+  uploadBytes,
+} from "firebase/storage";
 import { storage } from "../firebase";
 import { db } from "../firebase";
 export const queryClient = new QueryClient();
@@ -75,7 +81,6 @@ export const sendName = () => {
         },
         { merge: true }
       );
-      console.log(userDocRef);
       return userDocRef;
     },
     onSuccess: () =>
@@ -85,7 +90,6 @@ export const sendName = () => {
     },
   });
 };
-
 
 interface ChangePassword {
   email: string;
@@ -114,9 +118,9 @@ export const useChangePassword = () => {
   });
 };
 
-interface ChangeName{
-  firstName: string,
-  lastName: string
+interface ChangeName {
+  firstName: string;
+  lastName: string;
 }
 
 export const useChangeName = () => {
@@ -128,11 +132,7 @@ export const useChangeName = () => {
           throw new Error("No authenticated user");
         }
         const userDocRef = doc(db, "UsersName", user.uid);
-        await setDoc(
-          userDocRef,
-          { firstName, lastName },
-          { merge: true }
-        );
+        await setDoc(userDocRef, { firstName, lastName }, { merge: true });
         return { firstName, lastName };
       } catch (error: any) {
         const message = error?.code || error?.message || "name-update-failed";
@@ -148,15 +148,22 @@ export function useAvatarAdd() {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
-      const storageRef = ref(storage, `images/Avatar/${user.uid}/${file.name}`);
+      const timestamp = Date.now();
+      const storageRef = ref(
+        storage,
+        `images/Avatar/${user.uid}/${timestamp}_${file.name}`
+      );
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      await setDoc(doc(db, 'avatars', user.uid ), {
-       
+      await setDoc(doc(db, "avatars", user.uid), {
         downloadURL,
         uploadedAt: serverTimestamp(),
-      })
+      });
       return { snapshot, downloadURL };
+    },
+    onSuccess: () => {
+      // Invalidate the avatar query to refetch the latest avatar
+      queryClient.invalidateQueries({ queryKey: ["avatar"] });
     },
   });
 }
@@ -167,22 +174,27 @@ export function useLoadingAvatar() {
     queryKey: ["avatar", user?.uid],
     queryFn: async () => {
       if (!user) throw new Error("No user!");
-      const avatarRef= ref(storage, `images/Avatar/${user?.uid}/`);
+
+      const avatarRef = ref(storage, `images/Avatar/${user?.uid}/`);
       const res = await listAll(avatarRef);
 
-      const sortedItems = res.items.sort((a: StorageReference, b:StorageReference) => {
-        if (a.name > b.name){
-          return -1;
+      const sortedItems = res.items.sort(
+        (a: StorageReference, b: StorageReference) => {
+          if (a.name > b.name) {
+            return -1;
+          }
+          if (a.name < b.name) {
+            return 1;
+          }
+          return 0;
         }
-        if (a.name < b.name){
-          return 1;
-        }
-        return 0;
-      })
+      );
       const lastAddFile = sortedItems[0];
+      if (!lastAddFile) {
+        return null;
+      }
       const url = await getDownloadURL(lastAddFile);
       return url;
-
     },
     enabled: !!user,
   });
@@ -203,4 +215,3 @@ export async function fetchAvatarByUid(uid: string): Promise<string> {
 
   return await getDownloadURL(lastAddedFile);
 }
-

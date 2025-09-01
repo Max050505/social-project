@@ -1,0 +1,21 @@
+.avatar{
+    width: 80%;
+    background-color:rgb(233, 232, 230);
+    cursor: alias;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: start;
+    .avatarImage{
+        border-radius: 9999px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+}
+.name{
+    text-align: left;
+    font-family:'Courier New', Courier, monospace ;
+    padding-left: 20px;
+}
+

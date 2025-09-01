@@ -7,6 +7,8 @@ import RegistrationPage from "../../Pages/RegistrationPage";
 import AuthenticationPage from "../../Pages/AuthenticationPage";
 import userEvent from "@testing-library/user-event";
 import { registerUser } from "../../Utils/authService";
+import { sendName } from "../../Utils/http";
+
 const navigateMock= vi.fn();
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -16,9 +18,9 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../Utils/authService", async () => {
+vi.mock("../../Utils/authService", async () => {
   const actual = await vi.importActual<typeof import("../../Utils/authService")>(
-    "../Utils/authService"
+    "../../Utils/authService"
   );
   return {
     ...actual,
@@ -26,9 +28,28 @@ vi.mock("../Utils/authService", async () => {
   };
 });
 
+vi.mock("../../Utils/http", async () => {
+  const actual = await vi.importActual<typeof import("../../Utils/http")>(
+    "../../Utils/http"
+  );
+  return {
+    ...actual,
+    sendName: vi.fn(() => ({
+      mutateAsync: vi.fn().mockResolvedValue({}),
+    })),
+  };
+});
+
 describe("Test RegistrationFrom element ", () => {
   it("testing registrationfrom input, button", async () => {
-    (registerUser as ReturnType<typeof vi.fn>).mockResolvedValueOnce({});
+    const mockRegisterUser = vi.fn().mockResolvedValue({});
+    const mockSendName = vi.fn().mockResolvedValue({});
+    
+    (registerUser as ReturnType<typeof vi.fn>).mockImplementation(mockRegisterUser);
+    (sendName as ReturnType<typeof vi.fn>).mockReturnValue({
+      mutateAsync: mockSendName,
+    });
+    
     CustomRender(<RegistrationForm />);
 
     const firstNameInput = screen.getByTestId(/first-name/i);
@@ -52,14 +73,22 @@ describe("Test RegistrationFrom element ", () => {
     });
     await userEvent.click(buttonElement);
 
-    expect(registerUser).toHaveBeenCalledWith(
+    expect(mockRegisterUser).toHaveBeenCalledWith(
       'soth@example.com', 'sum12345'
-    )
+    );
+    
+    expect(mockSendName).toHaveBeenCalledWith({
+      firstName: 'John',
+      lastName: 'Cooper',
+      email: 'soth@example.com',
+    });
   
     expect(navigateMock).toHaveBeenCalledWith('/welcome');
-    expect(registerUser).toHaveBeenCalledTimes(1);
+    expect(mockRegisterUser).toHaveBeenCalledTimes(1);
+    expect(mockSendName).toHaveBeenCalledTimes(1);
     navigateMock.mockClear();
     (registerUser as ReturnType<typeof vi.fn>).mockClear();
+    (sendName as ReturnType<typeof vi.fn>).mockClear();
   });
 
   it("testing navigation to login page.", async () => {

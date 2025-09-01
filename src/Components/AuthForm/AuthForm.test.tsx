@@ -7,14 +7,28 @@ import { signInUser } from "../../Utils/authService";
 import { Route, Routes } from "react-router-dom";
 import RegistrationPage from "../../Pages/RegistrationPage";
 import AuthenticationPage from "../../Pages/AuthenticationPage";
+import { useCurrentUser } from "../../Utils/http";
 
-vi.mock("../Utils/authService", async () => {
+vi.mock("../../Utils/authService", async () => {
   const actual = await vi.importActual<typeof import("../../Utils/authService")>(
-    "../Utils/authService"
+    "../../Utils/authService"
   );
   return {
     ...actual,
     signInUser: vi.fn(),
+  };
+});
+
+vi.mock("../../Utils/http", async () => {
+  const actual = await vi.importActual<typeof import("../../Utils/http")>(
+    "../../Utils/http"
+  );
+  return {
+    ...actual,
+    useCurrentUser: vi.fn(() => ({
+      isLoading: false,
+      data: null,
+    })),
   };
 });
 
@@ -41,7 +55,9 @@ describe("Testing AuthForm component", () => {
   });
 
   it("fills and submit the form", async () => {
-    (signInUser as ReturnType<typeof vi.fn>).mockResolvedValueOnce({});
+    const mockSignInUser = vi.fn().mockResolvedValue({});
+    (signInUser as ReturnType<typeof vi.fn>).mockImplementation(mockSignInUser);
+    
     CustomRender(<AuthForm />);
     const emailInput = screen.getByTestId(/email/i);
     const passwordInput = screen.getByTestId(/password/i);
@@ -56,12 +72,12 @@ describe("Testing AuthForm component", () => {
     })
     await userEvent.click(buttonElement);
 
-    expect(signInUser).toHaveBeenCalledWith(
+    expect(mockSignInUser).toHaveBeenCalledWith(
       "some@example.com",
       "something1111"
     );
     expect(navigateMock).toHaveBeenCalledWith("/welcome");
-    expect(signInUser).toHaveBeenCalledTimes(1);
+    expect(mockSignInUser).toHaveBeenCalledTimes(1);
     navigateMock.mockClear();
     (signInUser as ReturnType<typeof vi.fn>).mockClear();
   });
@@ -73,7 +89,7 @@ describe("Testing AuthForm component", () => {
         <Route path="/registration" element={<RegistrationPage />} />
       </Routes>
     );
-    const navigateElement = screen.getByRole("link", { name: /sign up/i });
+    const navigateElement = screen.getByRole("link", { name: /Sign up/i });
 
     await userEvent.click(navigateElement);
 
