@@ -8,6 +8,7 @@ import { useAuthReady } from "../../../Utils/useAuthChanged";
 import { useAvatarAdd, useLoadingAvatar } from "../../../Utils/http";
 import { updateProfile } from "firebase/auth";
 import style from "./avatar.module.scss";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function Avatar() {
   const { firstName, lastName } = useSelector((state: RootState) => state.name);

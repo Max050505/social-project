@@ -24,6 +24,22 @@ const SideBar = () => {
   const [isDark, setIsDark] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [hideSideBar, setHideSideBar] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if screen is mobile size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth <= 768) {
+        setHideSideBar(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -73,10 +89,20 @@ const SideBar = () => {
       }}
     >
       <Layout className={style.mainBar}>
+        {/* Mobile menu button */}
+        {isMobile && (
+          <button 
+            className={`${style.mobileMenuButton}`}
+            onClick={() => setHideSideBar(!hideSideBar)}
+          >
+            {hideSideBar ? '☰' : '✕'}
+          </button>
+        )}
+        
         <Sider
-          className={style.secondBar}
+          className={`${style.secondBar} ${isMobile && !hideSideBar ? style.show : ''}`}
           collapsible
-          collapsed={hideSideBar}
+          collapsed={isMobile ? true : hideSideBar}
           collapsedWidth={72}
           trigger={null}
           style={{
@@ -89,7 +115,7 @@ const SideBar = () => {
             <SideBarHiddenButton
               className={`${isDark ? style.darkbutton : style.lightbutton} ${
                 style.sideBarHiddenButton
-              }`}
+              } ${isMobile && style.hiddenButton}`}
               onClick={handleHideSideBar}
             >
               <motion.p
@@ -100,7 +126,7 @@ const SideBar = () => {
               </motion.p>
             </SideBarHiddenButton>
           </div>
-          <div className={`${style.container} ${hideSideBar && style.center}`}>
+          <div className={`${style.container} ${(hideSideBar || isMobile) && style.center}`}>
             <h2 className={isDark ? style.titleDark : style.title}>
               <Image
                 src={isDark ? logos[0].image : logos[1].image}
@@ -108,9 +134,9 @@ const SideBar = () => {
                 preview={false}
                 className={style.mainLogoStyle}
               />
-              {!hideSideBar && "Social"}
+              {(!hideSideBar && !isMobile) && "Social"}
             </h2>
-            <ul className={`${hideSideBar && style.center}`}>
+            <ul className={`${(hideSideBar || isMobile) && style.center}`}>
               <li>
                 <NavLink
                   to="/friends"
@@ -133,7 +159,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  {!hideSideBar && "Friends"}
+                  {(!hideSideBar && !isMobile) && "Friends"}
                 </NavLink>
               </li>
               <li>
@@ -159,7 +185,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  {!hideSideBar && "My profile"}
+                  {(!hideSideBar && !isMobile) && "My profile"}
                 </NavLink>
               </li>
               <li>
@@ -184,12 +210,12 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  {!hideSideBar && "Main"}
+                  {(!hideSideBar && !isMobile) && "Main"}
                 </NavLink>
               </li>
             </ul>
             <span className={isDark ? style.lineDark : style.line}></span>
-            <ul className={`${hideSideBar && style.center}`}>
+            <ul className={`${(hideSideBar || isMobile) && style.center}`}>
               <li>
                 <NavLink
                   to="config"
@@ -212,7 +238,7 @@ const SideBar = () => {
                       className={style.logoStyle}
                     />
                   )}
-                  {!hideSideBar && "Config"}
+                  {(!hideSideBar && !isMobile) && "Config"}
                 </NavLink>
               </li>
               <li>
@@ -228,7 +254,7 @@ const SideBar = () => {
                     preview={false}
                     className={style.logoStyle}
                   />
-                  {!hideSideBar && "Logout"}
+                  {(!hideSideBar && !isMobile) && "Logout"}
                 </div>
               </li>
             </ul>
@@ -249,7 +275,7 @@ const SideBar = () => {
                     width={60}
                     height={60}
                   />
-                  {!hideSideBar && (
+                  {(!hideSideBar && !isMobile) && (
                     <div>
                       <p>
                         {firstName} {lastName}
@@ -271,7 +297,7 @@ const SideBar = () => {
                   },
                 }}
               >
-                {!hideSideBar && (
+                {(!hideSideBar && !isMobile) && (
                   <Image
                     src={isDark ? logos[12].image : logos[11].image}
                     alt={isDark ? logos[12].alt : logos[11].alt}
@@ -291,7 +317,7 @@ const SideBar = () => {
                   
                 />
 
-                {!hideSideBar && (
+                {(!hideSideBar && !isMobile) && (
                   <Image
                     src={isDark ? logos[14].image : logos[13].image}
                     alt={isDark ? logos[14].alt : logos[13].alt}
@@ -306,6 +332,14 @@ const SideBar = () => {
             </div>
           </div>
         </Sider>
+        
+        {/* Mobile overlay */}
+        {isMobile && !hideSideBar && (
+          <div 
+            className={style.mobileOverlay}
+            onClick={() => setHideSideBar(true)}
+          />
+        )}
       </Layout>
 
 
@@ -337,3 +371,4 @@ export function loader({ params }: LoaderFunctionArgs) {
     queryFn: () => fetchAvatarByUid(uid),
   });
 }
+

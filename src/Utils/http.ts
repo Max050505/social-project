@@ -6,7 +6,7 @@ import {
   currentUser,
 } from "./authService";
 import { auth } from "../firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import {
   getAuth,
   updatePassword,
@@ -22,6 +22,8 @@ import {
 } from "firebase/storage";
 import { storage } from "../firebase";
 import { db } from "../firebase";
+import { useDispatch } from "react-redux";
+import { setName } from "../store/nameSlice";
 export const queryClient = new QueryClient();
 
 export const userRegister = () => {
@@ -124,6 +126,7 @@ interface ChangeName {
 }
 
 export const useChangeName = () => {
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: async ({ firstName, lastName }: ChangeName) => {
       try {
@@ -139,10 +142,15 @@ export const useChangeName = () => {
         throw new Error(message);
       }
     },
+    onSuccess: (data) => {
+      console.log("New name:", data); 
+      dispatch(setName(data))
+    }
   });
 };
 
 export function useAvatarAdd() {
+   const user = auth.currentUser;
   return useMutation({
     mutationFn: async ({ file }: { file: File }) => {
       const auth = getAuth();
@@ -155,7 +163,7 @@ export function useAvatarAdd() {
       );
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      await setDoc(doc(db, "avatars", user.uid), {
+      await setDoc(doc(db, "avatars", user.uid), {  
         downloadURL,
         uploadedAt: serverTimestamp(),
       });
@@ -163,40 +171,28 @@ export function useAvatarAdd() {
     },
     onSuccess: () => {
       // Invalidate the avatar query to refetch the latest avatar
-      queryClient.invalidateQueries({ queryKey: ["avatar"] });
+      queryClient.invalidateQueries({ queryKey: ["avatar", user?.uid] });
     },
   });
 }
 
 export function useLoadingAvatar() {
+
   const user = auth.currentUser;
   return useQuery({
     queryKey: ["avatar", user?.uid],
     queryFn: async () => {
       if (!user) throw new Error("No user!");
 
-      const avatarRef = ref(storage, `images/Avatar/${user?.uid}/`);
-      const res = await listAll(avatarRef);
+ const docRef = doc(db, "avatars", user.uid);
+      const docSnap = await getDoc(docRef);
 
-      const sortedItems = res.items.sort(
-        (a: StorageReference, b: StorageReference) => {
-          if (a.name > b.name) {
-            return -1;
-          }
-          if (a.name < b.name) {
-            return 1;
-          }
-          return 0;
-        }
-      );
-      const lastAddFile = sortedItems[0];
-      if (!lastAddFile) {
-        return null;
-      }
-      const url = await getDownloadURL(lastAddFile);
-      return url;
+      if (!docSnap.exists()) return null;
+
+      const data = docSnap.data();
+      return `${data.downloadURL}?t=${Date.now()}`;
     },
-    enabled: !!user,
+    enabled: !!auth.currentUser,
   });
 }
 

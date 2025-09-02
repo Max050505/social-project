@@ -2,6 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
 
   .secondBar {
     width: 100%;
@@ -97,13 +98,6 @@
           object-fit: contain;
           width: 2.5cap;
         }
-        .logoStyleSunMoon {
-          padding: 2px;
-          height: 2.5cap;
-          aspect-ratio: 1;
-          object-fit: contain;
-          width: 2.5cap;
-        }
         .link {
           text-decoration: none;
           font-size: 1rem;
@@ -128,6 +122,37 @@
     display: flex;
     align-items: center;
     gap: 5px;
+  }
+  
+  .mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+  }
+  
+  .mobileMenuButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: none; // Hidden by default on desktop
+    
+    &:hover {
+      background: #40a9ff;
+    }
   }
   .modal {
     position: fixed;
@@ -182,6 +207,96 @@
       font-size: 0.9rem;
       font-weight: bold;
      
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  
+  .mainBar {
+    .secondBar {
+      width: 100%;
+      height: 100vh;
+      // Auto-hide sidebar on mobile
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      position: fixed;
+      z-index: 1000;
+      
+      &.show {
+        transform: translateX(0);
+      }
+      
+      // Ensure collapsed width on mobile
+      .ant-layout-sider-children {
+        width: 72px !important;
+      }
+    }
+    
+    .mobileOverlay {
+      display: block;
+    }
+    
+    .mobileMenuButton {
+      display: block;
+    }
+    
+    .container {
+      width: 100%;
+      height: 100vh;
+
+    }
+    .sunMoon {
+      font-size: 1.5rem;
+    }
+    .modal {
+      width: 90%;
+      height: 90%;
+    }
+    .buttons {
+      button {
+        font-size: 1rem;
+      } 
+    } 
+    .wrap {
+      .sideBarHiddenButton {
+        p {
+          font-size: 1rem;
+        }
+      }
+    }
+    .person {
+      p {
+        font-size: 0.8rem;
+      }
+    }
+    .center {
+      flex-direction: column;
+    }
+    .logoStyle {
+      height: 2.25cap;
+      width: 2.25cap;
+    }
+    .link {
+      font-size: 0.8rem;
+    }
+    .light {
+      color: #000000;
+    }
+    .dark {
+      color: #ffffff;
+    }
+    .ul {
+      li {
+        .logoStyle {
+          height: 2.25cap;
+          width: 2.25cap;
+        }
+      }
+    }
+    .hiddenButton{
+      display:none;
+
     }
   }
 }
