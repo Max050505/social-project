@@ -4,12 +4,15 @@ import { useChangeName } from "../../../Utils/http";
 import style from "./changeName.module.scss";
 import { Spin } from "antd";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 interface FieldTypes {
   newFirstName: string;
   newLastName: string;
 }
 
 export default function ChangeName() {
+  const isDark = useSelector((state: RootState) => state.theme.state);
   const [isOpenCard, setIsOpenCard] = useState(false);
   const ChangeName = useChangeName();
   const {
@@ -30,7 +33,7 @@ export default function ChangeName() {
   return (
     <>
       <div className={style.card}>
-        <h3>If you you want to change name, click here</h3>
+        <h3 className={isDark ? style.text : ''}>If you you want to change name, click here</h3>
         <div className={`${style.inner} ${isOpenCard ? style.flipped : ""}`}>
           <div className={style.front} onClick={handleOpenCard}></div>
           <div className={style.back} onClick={handleOpenCard}>

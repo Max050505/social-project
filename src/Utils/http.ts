@@ -5,7 +5,6 @@ import {
   singOutUser,
   currentUser,
 } from "./authService";
-import { auth } from "../firebase";
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import {
   getAuth,
@@ -17,11 +16,9 @@ import {
   getDownloadURL,
   listAll,
   ref,
-  StorageReference,
   uploadBytes,
 } from "firebase/storage";
-import { storage } from "../firebase";
-import { db } from "../firebase";
+import { storage, db, auth } from "../firebase";
 import { useDispatch } from "react-redux";
 import { setName } from "../store/nameSlice";
 export const queryClient = new QueryClient();
@@ -153,8 +150,6 @@ export function useAvatarAdd() {
    const user = auth.currentUser;
   return useMutation({
     mutationFn: async ({ file }: { file: File }) => {
-      const auth = getAuth();
-      const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
       const timestamp = Date.now();
       const storageRef = ref(
@@ -181,6 +176,7 @@ export function useLoadingAvatar() {
   const user = auth.currentUser;
   return useQuery({
     queryKey: ["avatar", user?.uid],
+    staleTime: 1000 * 60 * 5, 
     queryFn: async () => {
       if (!user) throw new Error("No user!");
 

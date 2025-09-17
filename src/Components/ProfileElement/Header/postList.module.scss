@@ -1,0 +1,51 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  .item {
+    width: 30%;
+    list-style-type: none;
+    height: 300px;
+    img {
+      height: 300px;
+    }
+  }
+  .line {
+    height: 10px;
+    width: 100px;
+    background-color: black;
+  }
+
+
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+.actionButton {
+  position: absolute;
+  pointer-events: auto;
+  bottom: 24px;
+  right: 24px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.actionButton.remove {
+  right: 72px;
+}
+
+.liked {
+  background: #e11d48; /* rose-600 */
+}

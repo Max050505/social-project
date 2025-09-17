@@ -11,6 +11,8 @@ import WelcomePage from "./Pages/WelcomePage";
 import "./App.css";
 import SocialPage from "./Pages/SocialPage";
 import ConfigPage from "./Pages/ConfigPage";
+import ProtectedRoutes from "./Components/protectedRoutes/ProtectedRoutes";
+import ProfilePage from "./Pages/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -22,9 +24,10 @@ const router = createBrowserRouter([
       { index: true, element: <AuthenticationPage /> },
     ],
   },
+
   {
     path:'/welcome',
-    element:<SocialPage/>,
+    element:<ProtectedRoutes><SocialPage/></ProtectedRoutes>,
     id:'social',
     loader: avatarLoad,
     children:[
@@ -37,6 +40,11 @@ const router = createBrowserRouter([
         path:'config',
         element:<ConfigPage/>,
         id:'config',
+      },
+      {
+        path: "profile",
+        element: <ProfilePage/>,
+        id:'profile',
       }
     ]
   },

@@ -8,7 +8,8 @@ import { useAuthReady } from "../../../Utils/useAuthChanged";
 import { useAvatarAdd, useLoadingAvatar } from "../../../Utils/http";
 import { updateProfile } from "firebase/auth";
 import style from "./avatar.module.scss";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import AnimateName from "./AnimateName";
+import AnimateEmail from "./AnimateEmail";
 
 export default function Avatar() {
   const { firstName, lastName } = useSelector((state: RootState) => state.name);
@@ -27,7 +28,7 @@ export default function Avatar() {
   };
 
   const showAvatar = useLoadingAvatar();
-  const handleFileChange = async (e: any) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -36,9 +37,6 @@ export default function Avatar() {
 
       if (auth.currentUser && result?.downloadURL) {
         await updateProfile(auth.currentUser, { photoURL: result.downloadURL });
-
-        // Wait a bit longer for storage to update
-        await new Promise((res) => setTimeout(res, 400));
         await showAvatar.refetch?.();
 
         await auth.currentUser.reload();
@@ -67,12 +65,11 @@ export default function Avatar() {
         height={100}
         preview={true}
         onClick={handleImageClick}
+        
       />
       <div className={style.name}>
-        <p>
-          {firstName} {lastName}
-        </p>
-        <p>{email || " no Name"}</p>
+        <AnimateName firstName={firstName} lastName={lastName}></AnimateName>
+        <AnimateEmail email={email || " no Name"}></AnimateEmail>
       </div>
 
       <input
@@ -81,6 +78,7 @@ export default function Avatar() {
         accept="image/*"
         onChange={handleFileChange}
         style={{ display: "none" }}
+        data-testid = 'avatar-input'
       />
     </div>
   );

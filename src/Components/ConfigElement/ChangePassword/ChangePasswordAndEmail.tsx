@@ -8,6 +8,8 @@ import style from "./changePasswordAndEmail.module.scss";
 import { EmailAuthProvider, linkWithCredential } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { message, Spin } from "antd";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 type AuthFormTypes = {
   email: string;
@@ -16,6 +18,7 @@ type AuthFormTypes = {
 };
 
 export default function ChangePasswordAndEmail() {
+  const isDark = useSelector((state: RootState) => state.theme.state);
   const [isVerify, setIsVerify] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -82,7 +85,7 @@ export default function ChangePasswordAndEmail() {
   };
   return (
     <div className={style.card}>
-      <h3>If you you want to change password, click here</h3>
+      <h3 className={isDark ? style.text : ''}>If you you want to change password, click here</h3>
       <div className={`${style.inner} ${isOpen ? style.flipped : ""}`}>
         <div className={style.front} onClick={handleFlipp}></div>
         <div className={style.back} onClick={handleFlipp}>

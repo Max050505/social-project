@@ -17,16 +17,18 @@ import { logos } from "../../UI/logo";
 import { useAuthReady } from "../../Utils/useAuthChanged";
 import { fetchName } from "../../store/nameAction";
 import Modal from "../../UI/Modal";
-import { AnimatePresence, motion } from "framer-motion";
+import {motion } from "framer-motion";
 import type { LoaderFunctionArgs } from "react-router-dom";
+import { setThemeState } from "../../store/themeSlice";
+
 
 const SideBar = () => {
-  const [isDark, setIsDark] = useState(false);
+  const isDark = useSelector((state: RootState) => state.theme.state);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [hideSideBar, setHideSideBar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check if screen is mobile size
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -51,11 +53,13 @@ const SideBar = () => {
     }
   }, [dispatch, authReady]);
 
+
   function handleHideSideBar() {
     setHideSideBar((prev) => !prev);
   }
   const { firstName, lastName } = useSelector((state: RootState) => state.name);
   const email = useSelector((state: RootState) => state.email);
+  
 
   const logout = logOut();
   const handleLogoutClick = () => {
@@ -65,7 +69,7 @@ const SideBar = () => {
   const confirmLogout = async () => {
     try {
       await logout.mutateAsync();
-      navigate("/");
+      navigate('/');
     } catch (err) {
       console.log("Try again, accur some problem with logout");
     }
@@ -165,7 +169,7 @@ const SideBar = () => {
               <li>
                 {" "}
                 <NavLink
-                  to="/profile"
+                  to="profile"
                   className={`${isDark ? style.dark : style.light} ${
                     style.link
                   }`}
@@ -313,8 +317,7 @@ const SideBar = () => {
                   checked={isDark}
                   className={style.custom_switch}
                   size="small"
-                  onChange={(checked) => setIsDark(checked)}
-                  
+                  onChange={(checked) => dispatch(setThemeState(checked))}
                 />
 
                 {(!hideSideBar && !isMobile) && (
