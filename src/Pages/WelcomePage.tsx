@@ -1,11 +1,9 @@
-
+import Welcome from "../Components/WelcomeElement/Welcome";
 
 const WelcomePage = () => {
-
   return (
     <>
-
-      <h1>Welcome</h1>
+      <Welcome />
     </>
   );
 };

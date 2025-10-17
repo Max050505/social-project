@@ -24,11 +24,11 @@ export default function AuthenticationPage() {
   useEffect(() => {
     dispatch(setRandomWall());
   }, [dispatch]);
-  useEffect(() => {
-    if (user) {
-      setTimeout(() => navigate("/welcome"), 800);
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (user) {
+  //     setTimeout(() => navigate("/welcome"), 800);
+  //   }
+  // }, [user, navigate]);
   return (
     <AnimatePresence mode="wait">
       <motion.div

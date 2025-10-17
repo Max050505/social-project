@@ -1,5 +1,6 @@
 .bg {
   width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,6 +11,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,9 +19,29 @@
 }
 
 .container {
-  width: 70vw;
-  height: 100vh;
+  width: 70%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.line{
+  height: 3px;
+  width: 100%;
+  background-image: linear-gradient(to right, #808aa0 0%, #4f5153 51%, #555961 40%, );
+  margin: 20px 0 20px;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    height: auto;
+    padding-bottom: 24px;
+  }
+  .bg, .bgDark {
+    min-height: 100vh;
+  }
 }

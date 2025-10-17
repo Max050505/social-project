@@ -13,10 +13,13 @@ import SocialPage from "./Pages/SocialPage";
 import ConfigPage from "./Pages/ConfigPage";
 import ProtectedRoutes from "./Components/protectedRoutes/ProtectedRoutes";
 import ProfilePage from "./Pages/ProfilePage";
-
+import FriendsPage from "./Pages/FriendsPage";
+import MainPage from "./Pages/MainPage";
+import Notification from "./Components/SideBar/Notification";
+import {App as AntdApp} from 'antd';
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/main",
     element: <HomePage />,
     id: "root",
     children: [
@@ -26,7 +29,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path:'/welcome',
+    path:'/',
     element:<ProtectedRoutes><SocialPage/></ProtectedRoutes>,
     id:'social',
     loader: avatarLoad,
@@ -45,6 +48,21 @@ const router = createBrowserRouter([
         path: "profile",
         element: <ProfilePage/>,
         id:'profile',
+      },
+      {
+        path: "profile/:id",
+        element: <ProfilePage/>,
+        id:'user-profile',
+      },
+      {
+        path:'friends',
+        element:<FriendsPage/>,
+        id:'friends',
+      },
+      {
+        path:'story',
+        element:<MainPage/>,
+        id:'main',
       }
     ]
   },
@@ -55,8 +73,11 @@ function App(): JSX.Element {
   } , [])
   return (
     <QueryClientProvider client={queryClient}>
-
+      <AntdApp>
+      <Notification>
       <RouterProvider router={router} />
+      </Notification>
+      </AntdApp>
     </QueryClientProvider>
   );
 }

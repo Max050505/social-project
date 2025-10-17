@@ -1,0 +1,61 @@
+@font-face {
+  font-family: "Bodoni_Moda";
+  src: url('../../assets/fonts/Bodoni_Moda/BodoniModa-Italic-VariableFont_opsz,wght.ttf')
+    format("truetype");
+}
+
+.container {
+  width: 1024px;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  .photos {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sandText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .textOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  tspan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Bodoni_Moda";
+    font-size: 5rem;
+    fill: none;
+    stroke: #d2b48c;
+    stroke-width: 1px;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: write 3s linear forwards;
+    animation-fill-mode: both;
+    z-index: 9999;
+  }
+}
+
+@keyframes write {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

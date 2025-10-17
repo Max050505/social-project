@@ -1,27 +1,42 @@
 import { Image } from "antd";
-import { useLoadingPost, useRemovePost } from "../profileHttp";
-import { useEffect, useState } from "react";
-import React from "react";
+
+import {
+  useFetchLike,
+  useLoadingPost,
+  useRemoveLike,
+  useRemovePost,
+  useUserLikedPostIds
+} from "../../../Utils/profileHttp";
+import { useState } from "react";
 import style from "./postList.module.scss";
 import ButtonImage from "../UI/ButtonImage";
-export default function PostList() {
-  const post = useLoadingPost();
+import PostsAndLikes from "./PostsAndLikes";
+export default function PostList({userId}: {userId?: string}) {
+  const { data: images = [], isPending, isError } = useLoadingPost({userId});
+  const like = useFetchLike();
+  const unlike = useRemoveLike();
   const removePost = useRemovePost();
   const [isVisible, setIsVisible] = useState<null | number>(null);
-  type Item = { id: string; downloadURL: string; storagePath: string };
-  const [images, setImages] = useState<Item[]>([]);
-  const [liked, setLiked] = useState<Set<number>>(new Set());
+  const { data: likedPostIds = [] } = useUserLikedPostIds();
+  const currentPost = isVisible !== null ? images[isVisible] : null;
+  const isOverlayLiked = currentPost
+    ? likedPostIds.includes(currentPost.id)
+    : false;
+  if (isPending) return <p>...Pending</p>;
+  if (isError) return <p>Error loading posts</p>;
+  if (!images?.length) return <p>{userId ? 'This user has no posts' : 'Your posts list is empty'}</p>;
 
-  useEffect(() => {
-    const items = Array.isArray(post.data) ? post.data : [];
-    setImages(items as Item[]);
-  }, [post.data]);
-  if (post.isLoading) return <p>...Loading</p>;
-  if (post.isError) return <p>Error loading posts</p>;
-  if (!images.length) return <p>Your posts list is empty</p>;
-  console.log("post.data:", post.data);
+  const handlePutLike = (postId: string, isLiked: boolean, ownerUid: string) => {
+    if (isLiked) {
+      unlike.mutate({ postId, ownerUid });
+    } else if (!isLiked) {
+      like.mutate({ postId, ownerUid });
+    }
+  };
   return (
     <>
+    {!userId && (
+      <>
       <ul className={style.list}>
         <Image.PreviewGroup
           preview={{
@@ -35,34 +50,27 @@ export default function PostList() {
             },
           }}
         >
-          {images.map((item, index) => (
-            <React.Fragment key={index}>
-              <li className={style.item}>
-                <Image
-                  src={item.downloadURL}
-                  alt={`post-${index}`}
-                  onClick={() => setIsVisible(index)}
-                />
-              </li>
-            </React.Fragment>
-          ))}
+          <PostsAndLikes
+            images={images}
+            likedPostIds={likedPostIds}
+            onImageClick={(idx) => setIsVisible(idx)}
+            onToggleLike={(postId, isLiked, ownerUid) => handlePutLike(postId, isLiked, ownerUid)}
+            className={style.item}
+          />
+
         </Image.PreviewGroup>
       </ul>
       {isVisible !== null && (
         <div className={style.overlay}>
           <ButtonImage
             className={`${style.actionButton} ${
-              liked.has(isVisible) ? style.liked : ""
+              isOverlayLiked ? style.liked : ""
             }`}
             onClick={() => {
-              setLiked((prev) => {
-                const next = new Set(prev);
-                if (isVisible !== null) {
-                  if (next.has(isVisible)) next.delete(isVisible);
-                  else next.add(isVisible);
-                }
-                return next;
-              });
+              if (isVisible !== null) {
+                const current = images[isVisible];
+                handlePutLike(current.id, isOverlayLiked, current.ownerUid);
+              }
             }}
           >
             ❤
@@ -74,17 +82,13 @@ export default function PostList() {
               const current = images[isVisible];
               await removePost.mutateAsync({
                 id: current.id,
-                storagePath: current.downloadURL,
+                storagePath: current.storagePath,
               });
               if (isVisible === null) return;
-              setImages((prev) => {
-                const next = prev.filter((_, i) => i !== isVisible);
-                setIsVisible((current) => {
-                  if (current === null) return null;
-                  if (next.length === 0) return null;
-                  return Math.min(current, next.length - 1);
-                });
-                return next;
+              setIsVisible((prev) => {
+                const remaining = images.length - 1;
+                if (remaining <= 0) return null;
+                return Math.min(prev ?? 0, remaining - 1);
               });
             }}
           >
@@ -92,6 +96,8 @@ export default function PostList() {
           </ButtonImage>
         </div>
       )}
+      </>
+    )}
     </>
   );
 }

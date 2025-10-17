@@ -8,7 +8,7 @@ export default function ProtectedRoutes({children}: {children: any}){
         const token = localStorage.getItem('token');
         if(!token){
 
-            return <Navigate replace to='/'/>
+            return <Navigate replace to='/main'/>
         }
   
 

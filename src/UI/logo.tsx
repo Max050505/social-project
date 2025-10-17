@@ -13,6 +13,8 @@ import SunWhite from "../assets/icons8-sun-white.png";
 import MoonDark from "../assets/icons8-moon-black.png";
 import MoonWhite from "../assets/icons8-moon-white.png";
 import logout from "../assets/logout.png";
+import notification from "../assets/icons8-notification-light.png";
+import notificationDark from "../assets/icons8-notification-dark.png";
 interface Logo {
   image: string;
   alt: string;
@@ -33,4 +35,6 @@ export const logos: Logo[] = [
   { image: SunWhite, alt: "sun" },
   { image: MoonDark, alt: "moon" },
   { image: MoonWhite, alt: "moon" },
+  { image: notification, alt: "notification" },
+  { image: notificationDark, alt: "notification" },
 ];

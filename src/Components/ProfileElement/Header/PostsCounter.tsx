@@ -1,8 +1,8 @@
 import style from './PostsCounter.module.scss';
-import { useLoadingPost } from "../profileHttp";
-export default function PostsCounter({}){
+import { useLoadingPost } from "../../../Utils/profileHttp";
+export default function PostsCounter({userId}: {userId?: string}){
 
-    const post = useLoadingPost();
+    const post = useLoadingPost({userId});
     if(post.isLoading) {
         return <p>Loading...</p>
     }
@@ -10,9 +10,9 @@ export default function PostsCounter({}){
         return <p>Error</p>
     }
 
-    const countPost = Array.isArray(post.data) ? post.data.length : 0;
+   const count = post.data?.length ?? 0; 
 
     return (
-        <p className={style.count}>{countPost > 0 ? 'Posts' : 'Post'}:{countPost}</p>
+        <p className={style.count}>{count === 0 ? 'Post' : 'Posts'}:{count}</p>
     );
 }

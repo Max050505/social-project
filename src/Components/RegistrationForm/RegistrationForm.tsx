@@ -32,7 +32,7 @@ const RegistrationForm = () => {
         lastName: data.lastName,
         email: data.email,
       });
-      navigate("/welcome");
+      navigate("/");
       reset();
     } catch (err: any) {
       console.error("Registration or saving name failed:", err);
@@ -175,7 +175,7 @@ const RegistrationForm = () => {
             <button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Loading..." : "Sign up"}
             </button>
-            <NavLink to={"/"}>Sign in</NavLink>
+            <NavLink to={"/main"}>Sign in</NavLink>
           </motion.form>
         </div>
       </div>

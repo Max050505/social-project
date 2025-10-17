@@ -1,0 +1,119 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  
+  .list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .postAuthor{
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 0 0.5rem 0;
+
+    // Style Ant Design Image's internal img element
+    :global(.ant-image) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    :global(.ant-image-img) {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+  .post {
+    list-style: none;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: block;
+  --post-media-height: 420px;
+    
+
+    img{
+      display: block;
+      width: 100%;
+      height: var(--post-media-height);
+      object-fit: cover;
+    }
+
+    // Handle Ant Design Image internal <img>
+    :global(.ant-image-img) {
+      width: 100%;
+      height: var(--post-media-height) !important;
+      object-fit: cover;
+      display: block;
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem 0.5rem;
+    
+    .list {
+      max-width: 100%;
+      gap: 1.5rem;
+    }
+    
+    .post {
+      --post-media-height: 320px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+      img {
+        border-radius: 0; 
+      }
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+    
+    .list {
+      gap: 1rem;
+    }
+    
+    .post {
+      --post-media-height: 220px;
+      border-radius: 6px;
+    }
+  }
+}

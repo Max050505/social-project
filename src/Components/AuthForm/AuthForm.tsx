@@ -24,7 +24,7 @@ const AuthForm = () => {
     try {
       await signInUser(data.email, data.password);
       reset();
-      navigate("/welcome");
+      navigate("/");
     } catch (err: any) {
       console.log("login error");
     }
@@ -110,7 +110,7 @@ const AuthForm = () => {
           </motion.form>
           <p>
             Dont have an account?
-            <NavLink to={"/registration"}>Sign up</NavLink>
+            <NavLink to="/main/registration">Sign up</NavLink>
           </p>
         </div>
       </div>

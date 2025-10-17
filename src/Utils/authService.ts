@@ -5,9 +5,9 @@ import {
   signOut,
   onIdTokenChanged,
   onAuthStateChanged,
- 
+  User
 } from "firebase/auth";
-
+import { useState, useEffect } from "react";
 
 export const registerUser = async (email: string, password: string) => {
   return await createUserWithEmailAndPassword(auth, email, password);
@@ -49,3 +49,17 @@ export const currentUser = async (): Promise<null | {
   });
 };
 
+export const useAuthUser = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
+
+  return { user, loading };
+};

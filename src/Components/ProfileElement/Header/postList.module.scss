@@ -5,12 +5,20 @@
   gap: 10px;
   width: 100%;
   padding: 0;
+  
   .item {
     width: 30%;
     list-style-type: none;
     height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    margin-bottom: 3rem;
     img {
       height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
     }
   }
   .line {
@@ -20,6 +28,24 @@
   }
 
 
+}
+
+.heartIcon{
+  font-size: 20px;
+  transition: all 0.2s ease;
+
+  &:hover{
+    opacity: 0.9;
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+}
+
+.heartIconClicked{
+  color: white;
+  background-color: #e11d48;
+  border-radius: 50%;
+  padding: 4px;
 }
 
 .overlay {
@@ -47,5 +73,36 @@
 }
 
 .liked {
-  background: #e11d48; /* rose-600 */
+  background: #e11d48; 
+}
+
+/* Responsive grid */
+@media (max-width: 1024px) {
+  .list .item {
+    width: calc(50% - 5px);
+    height: 240px;
+  }
+  .list .item img {
+    height: 240px;
+  }
+}
+
+@media (max-width: 600px) {
+  .list {
+    gap: 8px;
+  }
+  .list .item {
+    width: 100%;
+    height: 220px;
+  }
+  .list .item img {
+    height: 220px;
+  }
+  .actionButton {
+    bottom: 16px;
+    right: 16px;
+  }
+  .actionButton.remove {
+    right: 56px;
+  }
 }

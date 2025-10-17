@@ -7,7 +7,6 @@ import {
 } from "./authService";
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import {
-  getAuth,
   updatePassword,
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -69,6 +68,7 @@ export const sendName = () => {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
       const userDocRef = doc(db, "UsersName", user.uid);
+      const fullNameToLowerCase = (firstName + ' ' + lastName).toLowerCase();
       await setDoc(
         userDocRef,
         {
@@ -77,6 +77,7 @@ export const sendName = () => {
           email,
           uid: user.uid,
           createdAt: serverTimestamp(),
+          fullNameToLowerCase
         },
         { merge: true }
       );
@@ -165,22 +166,22 @@ export function useAvatarAdd() {
       return { snapshot, downloadURL };
     },
     onSuccess: () => {
-      // Invalidate the avatar query to refetch the latest avatar
+     
       queryClient.invalidateQueries({ queryKey: ["avatar", user?.uid] });
     },
   });
 }
 
-export function useLoadingAvatar() {
+export function useLoadingAvatar({ userId }: { userId?: string } = {}) {
 
   const user = auth.currentUser;
+  const targetUid = userId || user?.uid;
   return useQuery({
-    queryKey: ["avatar", user?.uid],
+    queryKey: ["avatar", userId || user?.uid],
     staleTime: 1000 * 60 * 5, 
     queryFn: async () => {
-      if (!user) throw new Error("No user!");
-
- const docRef = doc(db, "avatars", user.uid);
+      if (!targetUid) throw new Error("No user!");
+const docRef = doc(db, "avatars", targetUid);
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) return null;
