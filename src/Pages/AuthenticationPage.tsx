@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+
 import AuthForm from "../Components/AuthForm/AuthForm";
 import { useCurrentUser } from "../Utils/http";
 import { useEffect } from "react";
@@ -12,9 +12,8 @@ export default function AuthenticationPage() {
     animate: { opacity: 1, rotateY: 0 },
     exit: { opacity: 0, rotateY: 90 },
   };
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, data: user } = useCurrentUser();
+  const { isLoading, } = useCurrentUser();
 
   const { walls, currentWallIndex } = useSelector(
     (state: RootState) => state.wall
@@ -24,11 +23,7 @@ export default function AuthenticationPage() {
   useEffect(() => {
     dispatch(setRandomWall());
   }, [dispatch]);
-  // useEffect(() => {
-  //   if (user) {
-  //     setTimeout(() => navigate("/welcome"), 800);
-  //   }
-  // }, [user, navigate]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

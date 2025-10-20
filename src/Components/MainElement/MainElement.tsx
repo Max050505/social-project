@@ -8,12 +8,15 @@ import {
 import { useState, useMemo } from "react";
 import { Image } from "antd";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 import PostsAndLikes from "../ProfileElement/Header/PostsAndLikes";
 export default function MainElement() {
   const { data: posts, isLoading } = useGetFriendsPosts();
   const { data: likedPostIds = [] } = useUserLikedPostIds();
   const [isVisible, setIsVisible] = useState<null | number>(null);
+  const isDark = useSelector((state: RootState) => state.theme.state);
   const like = useFetchLike();
   const unlike = useRemoveLike();
   const handlePutLike = useMemo(
@@ -29,6 +32,7 @@ export default function MainElement() {
   if (!posts?.length) return <p>Your posts list is empty</p>;
   if(isLoading) return <p>Wait a second the posts are loading...</p>
   return (
+    <main className={isDark ? style.bgDark : style.bg}>
     <div className={style.container}>
       {!posts?.length ? (
         <p>You have no friends posts</p>
@@ -40,7 +44,7 @@ export default function MainElement() {
                 <NavLink to={post.id}>
                 <Image src={post.avatar} width={50} height={50} preview={false} />
                 </NavLink>
-                <p>{post.authorFullName}</p>
+                <p className={isDark ? style.darkName : ''}>{post.authorFullName}</p>
               </div>
 
               <PostsAndLikes
@@ -55,5 +59,6 @@ export default function MainElement() {
         </ul>
       )}
     </div>
+    </main>
   );
 }

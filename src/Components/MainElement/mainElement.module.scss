@@ -1,3 +1,21 @@
+.bg {
+  width: 100vw;
+  height: 100vh;  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.bgDark {
+  background-image: url(../../assets/DarkBPages/mainPage-DarkBg.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .container {
   width: 100%;
   min-height: 100vh;
@@ -7,7 +25,6 @@
   justify-content: flex-start;
   padding: 2rem 1rem;
   box-sizing: border-box;
-  
   .list {
     display: flex;
     flex-direction: column;
@@ -42,6 +59,9 @@
     p {
       margin: 0;
       font-weight: 600;
+    }
+    .darkName{
+      color: antiquewhite;
     }
   }
   .post {

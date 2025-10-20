@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, type JSX } from "react";
 import { queryClient } from "./Utils/http";
-import { callIdTokenChange } from "./Utils/authService";
+import { callIdTokenChange, useAuthUser } from "./Utils/authService";
 import { loader as avatarLoad} from './Components/SideBar/SideBar';
 import HomePage from "./Pages/HomePage";
 import RegistrationPage from "./Pages/RegistrationPage";
@@ -68,9 +68,17 @@ const router = createBrowserRouter([
   },
 ]);
 function App(): JSX.Element {
+  const {user, loading} = useAuthUser()
+  
   useEffect(() => {
     callIdTokenChange();
-  } , [])
+  } , []);
+
+  useEffect(() => {
+    if (user && !loading) {
+      queryClient.invalidateQueries(); 
+    }
+  }, [user, loading]);
   return (
     <QueryClientProvider client={queryClient}>
       <AntdApp>

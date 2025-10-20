@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { db, auth } from "../firebase";
+import { db} from "../firebase";
 import { useAuthUser } from "./authService";
 import {
   getDocs,
@@ -25,21 +25,22 @@ export const useGetFriendsPosts = () => {
         }).filter(Boolean) as string[];
         if (friendsId.length === 0) return [];
         console.log('friend:', friendsId)
-        const allPosts: any[] = [];
+       
 
-        for (const fid of friendsId) {
-          const postsRef = collection(db, 'posts', fid, 'items');
-          const snapshot = await getDocs(postsRef);
-          snapshot.forEach((doc) => allPosts.push({id: doc.id, ...doc.data()}));
-          
-        }
+
+          const snapshot = await Promise.all( friendsId.map((friends)=>  getDocs(collection(db, "posts", friends, "items"))))
+          const allPosts = snapshot.flatMap(snap =>
+            snap.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            } as any))
+          );
         
-        console.log('allpost:',allPosts)
-        return allPosts.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        return allPosts.sort((a,b) => (b.uploadedAt?.seconds || 0) - (a.uploadedAt?.seconds || 0));
     },
-    enabled: !!user || !!loading,
+    enabled: !!user && !loading,
     staleTime: 1000 * 60 * 3,
-
+    refetchOnWindowFocus: false,
   });
   
 };

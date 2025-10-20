@@ -35,8 +35,6 @@ export default function PostList({userId}: {userId?: string}) {
   };
   return (
     <>
-    {!userId && (
-      <>
       <ul className={style.list}>
         <Image.PreviewGroup
           preview={{
@@ -57,10 +55,11 @@ export default function PostList({userId}: {userId?: string}) {
             onToggleLike={(postId, isLiked, ownerUid) => handlePutLike(postId, isLiked, ownerUid)}
             className={style.item}
           />
-
         </Image.PreviewGroup>
       </ul>
-      {isVisible !== null && (
+      
+  
+      {!userId && isVisible !== null && (
         <div className={style.overlay}>
           <ButtonImage
             className={`${style.actionButton} ${
@@ -98,6 +97,3 @@ export default function PostList({userId}: {userId?: string}) {
       )}
       </>
     )}
-    </>
-  );
-}

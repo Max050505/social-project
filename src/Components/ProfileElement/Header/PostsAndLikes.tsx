@@ -30,7 +30,6 @@ export default function PostsAndLikes({
 }: PostsAndLikesProps) {
   return (
     <>
-
         {images.map((item, index) => {
           const isLiked = likedPostIds.includes(item.id);
           return (
@@ -57,7 +56,6 @@ export default function PostsAndLikes({
             </li>
           );
         })}
-
     </>
   );
 }
