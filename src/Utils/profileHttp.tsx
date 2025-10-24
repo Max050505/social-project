@@ -17,11 +17,10 @@ import {
   deleteDoc,
   doc,
   setDoc,
-  collectionGroup,
+
   updateDoc,
   increment,
-  query,
-  where,
+ 
 } from "firebase/firestore";
 import { queryClient } from "./http";
 
@@ -206,6 +205,10 @@ export const useFetchLike = () => {
         refetchType: "active",
       });
       queryClient.invalidateQueries({
+        queryKey: ["user-like", postId, ownerUid],
+        refetchType: "active",
+      });
+      queryClient.invalidateQueries({
         queryKey: ["user-likes", auth.currentUser?.uid],
         refetchType: "active",
       });
@@ -315,6 +318,10 @@ export const useRemoveLike = () => {
         refetchType: "active",
       });
       queryClient.invalidateQueries({
+        queryKey: ["user-like", postId, ownerUid],
+        refetchType: "active",
+      });
+      queryClient.invalidateQueries({
         queryKey: ["user-likes", auth.currentUser?.uid],
         refetchType: "active",
       });
@@ -339,8 +346,8 @@ export const useIsPostLiked = (postId: string, ownerUid: string) => {
   const { user, loading } = useAuthUser();
 
   return useQuery({
-    queryKey: ["user-like", postId, user?.uid],
-    enabled: Boolean(postId && user) && !loading,
+    queryKey: ["user-like", postId, ownerUid, user?.uid],
+    enabled: Boolean(postId && ownerUid && user) && !loading,
     queryFn: async () => {
       if (!user) throw new Error("No authenticated user");
       const likeRef = doc(db, "posts", ownerUid, "items", postId, "likes", user.uid);
@@ -360,17 +367,7 @@ export const useUserLikedPostIds = () => {
     enabled: !!user && !loading,
     queryFn: async () => {
       if (!user) throw new Error("No authenticated user");
-
-      const likeSnap = await getDocs(
-        query(collectionGroup(db, "likes"), where("userId", "==", user.uid))
-      );
-      return likeSnap.docs.map((doc) => {
-        // The path structure is: posts/{ownerUid}/items/{postId}/likes/{userId}
-        // So we need to get the postId which is the parent of likes
-        const pathParts = doc.ref.path.split('/');
-        const postIdIndex = pathParts.indexOf('items') + 1;
-        return pathParts[postIdIndex];
-      }).filter(Boolean) as string[];
+      return [] as string[];
     },
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,

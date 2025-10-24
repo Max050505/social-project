@@ -32,7 +32,7 @@ export default function MainElement() {
   if (!posts?.length) return <p>Your posts list is empty</p>;
   if(isLoading) return <p>Wait a second the posts are loading...</p>
   return (
-    <main className={isDark ? style.bgDark : style.bg}>
+    <main data-testid = "main-container" className={isDark ? style.bgDark : style.bg}>
     <div className={style.container}>
       {!posts?.length ? (
         <p>You have no friends posts</p>

@@ -1,6 +1,7 @@
 import { Image } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
+import { useAppSelector } from "../../../store";
 import { fetchName } from "../../../store/nameAction";
 import { auth } from "../../../firebase";
 import { useEffect, useRef } from "react";
@@ -12,8 +13,8 @@ import AnimateName from "./AnimateName";
 import AnimateEmail from "./AnimateEmail";
 
 export default function Avatar() {
-  const { firstName, lastName } = useSelector((state: RootState) => state.name);
-  const email = useSelector((state: RootState) => state.email);
+  const { firstName, lastName } = useAppSelector((state: RootState) => state.name);
+  const email = useAppSelector((state: RootState) => state.email);
   const dispatch = useDispatch<AppDispatch>();
   const authReady = useAuthReady();
 
@@ -28,6 +29,8 @@ export default function Avatar() {
   };
 
   const showAvatar = useLoadingAvatar();
+  const avatarAdd = useAvatarAdd();
+  
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -35,12 +38,13 @@ export default function Avatar() {
     try {
       const result = await avatarAdd.mutateAsync({ file });
 
-      if (auth.currentUser && result?.downloadURL) {
-        await updateProfile(auth.currentUser, { photoURL: result.downloadURL });
+      if (result?.downloadURL) {
         await showAvatar.refetch?.();
-
-        await auth.currentUser.reload();
-        dispatch(fetchName());
+        if (auth.currentUser) {
+          await updateProfile(auth.currentUser, { photoURL: result.downloadURL });
+          await auth.currentUser.reload();
+          dispatch(fetchName());
+        }
       }
     } catch (error) {
       console.error("Failed to upload avatar:", error);
@@ -48,7 +52,6 @@ export default function Avatar() {
 
     e.target.value = "";
   };
-  const avatarAdd = useAvatarAdd();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className={style.avatar}>
@@ -63,7 +66,7 @@ export default function Avatar() {
         alt="avatar"
         width={100}
         height={100}
-        preview={true}
+        preview={false}
         onClick={handleImageClick}
         
       />

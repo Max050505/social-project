@@ -1,13 +1,13 @@
-import SearchName from "./SearchName";
+import SearchName from "./searchName/SearchName";
 import TapButton from "../../UI/TapButton";
-import Tabs from "./Tabs";
-import ToList from "./ToList";
+import Tabs from "../../UI/Tabs";
+import ToList from "./toList/ToList";
 import style from "./mainFriendsElement.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useState } from "react";
-import FriendsList from "./FriendsList";
-import FromList from "./FromList";
+import FriendsList from "./friendsList/FriendsList";
+import FromList from "./fromList/FromList";
 export default function MainFriendsElement({ userId }: { userId: string }) {
   const [selectedList, setSelectedList] = useState<string>("friends");
   const isDark = useSelector((state: RootState) => state.theme.state);
@@ -18,7 +18,7 @@ export default function MainFriendsElement({ userId }: { userId: string }) {
 
   return (
     <>
-      <div className={isDark ? style.bgDark : style.bg}>
+      <div data-testid = "main-container" className={isDark ? style.bgDark : style.bg}>
         <div className={style.container}>
           <header className={style.header}>
             <SearchName className={style.search} />
@@ -58,7 +58,7 @@ export default function MainFriendsElement({ userId }: { userId: string }) {
               }
             >
               {selectedList === 'friends' ? <FriendsList userId = {userId}/> :
-               selectedList === 'sended requests' ? <ToList /> :
+               selectedList === 'sended requests' ? <ToList userId={userId} /> :
                selectedList === 'Obtains Requests' ? <FromList userId={userId}/> : null}
             </Tabs>
           </main>

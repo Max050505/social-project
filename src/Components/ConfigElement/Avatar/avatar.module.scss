@@ -11,6 +11,9 @@
         border-radius: 9999px;
         object-fit: cover;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        &:hover{
+          cursor: pointer;
+        }
     }
 }
 .name{

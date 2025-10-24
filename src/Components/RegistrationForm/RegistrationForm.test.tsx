@@ -83,7 +83,7 @@ describe("Test RegistrationFrom element ", () => {
       email: 'soth@example.com',
     });
   
-    expect(navigateMock).toHaveBeenCalledWith('/welcome');
+    expect(navigateMock).toHaveBeenCalledWith('/');
     expect(mockRegisterUser).toHaveBeenCalledTimes(1);
     expect(mockSendName).toHaveBeenCalledTimes(1);
     navigateMock.mockClear();
@@ -94,10 +94,10 @@ describe("Test RegistrationFrom element ", () => {
   it("testing navigation to login page.", async () => {
     CustomRender(
       <Routes>
-        <Route path="/" element={<AuthenticationPage />} />
-        <Route path="/registration" element={<RegistrationPage />} />
+        <Route path="/main" element={<AuthenticationPage />} />
+        <Route path="/main/registration" element={<RegistrationPage />} />
       </Routes>,
-      ["/registration"]
+      ["/main/registration"]
     );
 
     const navigateElement = screen.getByRole("link", { name: /Sign in/i });

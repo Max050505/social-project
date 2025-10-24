@@ -1,8 +1,8 @@
 import { Image } from "antd";
-import { useGetFromRequestUser, useSendToFriends } from "../../Utils/httpFriendRequest";
+import { useGetFromRequestUser, useSendToFriends } from "../../../Utils/httpFriendRequest";
 import style from "./fromList.module.scss";
-import AcceptAndCancelButton from "../../UI/AcceptAndCancelButton";
-import { useRemoveRequestToFriends } from "../../Utils/httpFriendRequest";
+import AcceptAndCancelButton from "../../../UI/AcceptAndCancelButton";
+import { useRemoveRequestToFriends } from "../../../Utils/httpFriendRequest";
 import {Link} from 'react-router-dom';
 
 export default function FromList({userId}: {userId: string}) {
@@ -46,6 +46,7 @@ export default function FromList({userId}: {userId: string}) {
             </Link>
             <div className={style.buttons}>
             <AcceptAndCancelButton
+            
               onClick={() => handleCancelRequest(user.id)}
               className={style.cancelButton}
               disabled={cancel.isPending || accept.isPending}

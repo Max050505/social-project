@@ -32,7 +32,7 @@ describe("Testing changeName element of config page", () => {
 
     CustomRender(<ChangeName />);
     
-    // Click the card to flip it and show the form
+
     const card = screen.getByText("If you you want to change name, click here");
     await userEvent.click(card);
 

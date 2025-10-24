@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 type SearchPerson = {

@@ -1,9 +1,9 @@
 import { Image } from "antd";
-import { useGetSentFriendRequests } from "../../Utils/httpFriendRequest";
+import { useGetSentFriendRequests } from "../../../Utils/httpFriendRequest";
 import style from "./toList.module.scss";
-import AcceptAndCancelButton from "../../UI/AcceptAndCancelButton";
-import { useRemoveRequestToFriends } from "../../Utils/httpFriendRequest";
-export default function ToList() {
+import AcceptAndCancelButton from "../../../UI/AcceptAndCancelButton";
+import { useRemoveRequestToFriends } from "../../../Utils/httpFriendRequest";
+export default function ToList(_: { userId: string }) {
   const { data: sentRequest = [], isLoading } = useGetSentFriendRequests();
   const cancel = useRemoveRequestToFriends();
   function handleCancelRequest(userId: string) {

@@ -7,7 +7,6 @@ import { signInUser } from "../../Utils/authService";
 import { Route, Routes } from "react-router-dom";
 import RegistrationPage from "../../Pages/RegistrationPage";
 import AuthenticationPage from "../../Pages/AuthenticationPage";
-import { useCurrentUser } from "../../Utils/http";
 
 vi.mock("../../Utils/authService", async () => {
   const actual = await vi.importActual<typeof import("../../Utils/authService")>(
@@ -19,18 +18,6 @@ vi.mock("../../Utils/authService", async () => {
   };
 });
 
-vi.mock("../../Utils/http", async () => {
-  const actual = await vi.importActual<typeof import("../../Utils/http")>(
-    "../../Utils/http"
-  );
-  return {
-    ...actual,
-    useCurrentUser: vi.fn(() => ({
-      isLoading: false,
-      data: null,
-    })),
-  };
-});
 
 const navigateMock = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -42,6 +29,9 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("Testing AuthForm component", () => {
+      afterEach(() => {
+      vi.clearAllMocks();
+    });
   it("renders photo", () => {
     CustomRender(<AuthForm />);
     const image = screen.getByAltText(/login-photo/i);
@@ -76,7 +66,7 @@ describe("Testing AuthForm component", () => {
       "some@example.com",
       "something1111"
     );
-    expect(navigateMock).toHaveBeenCalledWith("/welcome");
+    expect(navigateMock).toHaveBeenCalledWith("/");
     expect(mockSignInUser).toHaveBeenCalledTimes(1);
     navigateMock.mockClear();
     (signInUser as ReturnType<typeof vi.fn>).mockClear();
@@ -85,14 +75,17 @@ describe("Testing AuthForm component", () => {
   it("Check the navigate link 'sign up'.", async () => {
     CustomRender(
       <Routes>
-        <Route path="/" element={<AuthenticationPage />} />
-        <Route path="/registration" element={<RegistrationPage />} />
-      </Routes>
+        <Route path="/" element={<AuthForm />} />
+        <Route path="/main/registration" element={<RegistrationPage />} />
+      </Routes>,
+      ['/']
     );
     const navigateElement = screen.getByRole("link", { name: /Sign up/i });
 
     await userEvent.click(navigateElement);
 
     expect(screen.getByText(/account/i)).toBeInTheDocument();
+
   });
+  
 });
