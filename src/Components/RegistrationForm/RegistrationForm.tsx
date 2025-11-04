@@ -1,6 +1,6 @@
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion} from "framer-motion";
 import CustomInput from "../../UI/Input";
 import style from "./RegistrationForm.module.scss";
 import { registerUser } from "../../Utils/authService";

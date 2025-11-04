@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { fetchPost, useLoadingPost } from "../../../Utils/profileHttp";
-import { auth } from "../../../firebase";
+import { fetchPost, useLoadingPost } from "../../../../Utils/profileHttp";
+import { auth } from "../../../../firebase";
 import { updateProfile } from "firebase/auth";
 import style from "./AddButtonPost.module.scss";
 import { Spin } from "antd";
-import AddFriendButton from "./AddFriendButton";
+import AddFriendButton from "../addFriendButton/AddFriendButton";
 export default function AddButtonPost({ userId }: { userId?: string }) {
   const filePost = useRef<HTMLInputElement | null>(null);
   const handleAddPost = () => {

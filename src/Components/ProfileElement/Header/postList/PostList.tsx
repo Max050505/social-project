@@ -6,25 +6,25 @@ import {
   useRemoveLike,
   useRemovePost,
   useUserLikedPostIds
-} from "../../../Utils/profileHttp";
+} from "../../../../Utils/profileHttp";
 import { useState } from "react";
 import style from "./postList.module.scss";
-import ButtonImage from "../UI/ButtonImage";
-import PostsAndLikes from "./PostsAndLikes";
+import ButtonImage from "../../UI/ButtonImage";
+import PostsAndLikes from "../postsAndLikes/PostsAndLikes";
 export default function PostList({userId}: {userId?: string}) {
   const { data: images = [], isPending, isError } = useLoadingPost({userId});
   const like = useFetchLike();
   const unlike = useRemoveLike();
   const removePost = useRemovePost();
   const [isVisible, setIsVisible] = useState<null | number>(null);
-  const { data: likedPostIds = [] } = useUserLikedPostIds();
+  const { data: likedPostIds=[]} = useUserLikedPostIds();
   const currentPost = isVisible !== null ? images[isVisible] : null;
   const isOverlayLiked = currentPost
-    ? likedPostIds.includes(currentPost.id)
+    ? likedPostIds?.includes(currentPost.id)
     : false;
   if (isPending) return <p>...Pending</p>;
   if (isError) return <p>Error loading posts</p>;
-  if (!images?.length) return <p>{userId ? 'This user has no posts' : 'Your posts list is empty'}</p>;
+  if (!images?.length) return <p data-testid='vain-post'>{userId ? 'This user has no posts' : 'Your posts list is empty'}</p>;
 
   const handlePutLike = (postId: string, isLiked: boolean, ownerUid: string) => {
     if (isLiked) {
@@ -62,6 +62,7 @@ export default function PostList({userId}: {userId?: string}) {
       {!userId && isVisible !== null && (
         <div className={style.overlay}>
           <ButtonImage
+          data-testid="likeBtn"
             className={`${style.actionButton} ${
               isOverlayLiked ? style.liked : ""
             }`}
@@ -75,6 +76,7 @@ export default function PostList({userId}: {userId?: string}) {
             ❤
           </ButtonImage>
           <ButtonImage
+          data-testid="deleteBtn"
             className={`${style.actionButton} ${style.remove}`}
             onClick={async () => {
               if (isVisible === null) return;

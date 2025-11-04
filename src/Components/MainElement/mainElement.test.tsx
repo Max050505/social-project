@@ -69,7 +69,7 @@ vi.mock("antd", () => ({
   ),
 }));
 
-vi.mock("../ProfileElement/Header/PostsAndLikes", () => ({
+vi.mock("../ProfileElement/Header/postsAndLikes/PostsAndLikes", () => ({
   default: ({
     images,
     onToggleLike,

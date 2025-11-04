@@ -24,6 +24,8 @@ import { setThemeState } from "../../store/themeSlice";
 const SideBar = () => {
   const isDark = useSelector((state: RootState) => state.theme.state);
   const isStartPageActive = useSelector((state: RootState) => state.startPageState.isActive);
+  const { firstName, lastName } = useSelector((state: RootState) => state.name);
+  const email = useSelector((state: RootState) => state.email);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [hideSideBar, setHideSideBar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -57,8 +59,6 @@ const SideBar = () => {
   function handleHideSideBar() {
     setHideSideBar((prev) => !prev);
   }
-  const { firstName, lastName } = useSelector((state: RootState) => state.name);
-  const email = useSelector((state: RootState) => state.email);
   
 
   const logout = logOut();
@@ -354,7 +354,7 @@ const SideBar = () => {
                 <h3>Confirm Logout </h3>
                 <p>Are you sure you want to logout?</p>
                 <div>
-                  <button onClick={confirmLogout}>Logout</button>
+                  <button data-testid="logout-button" onClick={confirmLogout}>Logout</button>
                   <button onClick={cancelLogout}>Cancel</button>
                 </div>
               </div>

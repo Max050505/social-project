@@ -1,5 +1,5 @@
 import style from './PostsCounter.module.scss';
-import { useLoadingPost } from "../../../Utils/profileHttp";
+import { useLoadingPost } from "../../../../Utils/profileHttp";
 export default function PostsCounter({userId}: {userId?: string}){
 
     const post = useLoadingPost({userId});
@@ -11,8 +11,8 @@ export default function PostsCounter({userId}: {userId?: string}){
     }
 
    const count = post.data?.length ?? 0; 
-
+   const label = count === 1 ? 'Post' : 'Posts';
     return (
-        <p className={style.count}>{count === 0 ? 'Post' : 'Posts'}:{count}</p>
+        <p data-testid='counter' className={style.count}>{label}:{count}</p>
     );
 }

@@ -1,14 +1,14 @@
 import { Image } from "antd";
 import { useDispatch } from "react-redux";
-import { AppDispatch, useAppSelector } from "../../../store";
-import { useAuthReady } from "../../../Utils/useAuthChanged";
+import { AppDispatch, useAppSelector } from "../../../../store";
+import { useAuthReady } from "../../../../Utils/useAuthChanged";
 import { useEffect } from "react";
-import { fetchName } from "../../../store/nameAction";
-import { useLoadingAvatar } from "../../../Utils/http";
+import { fetchName } from "../../../../store/nameAction";
+import { useLoadingAvatar } from "../../../../Utils/http";
 import style from "./AvatarProfile.module.scss";
-import AddButtonPost from "./AddButtonPost";
-import PostsCounter from "./PostsCounter";
-import { useGetOtherName } from "../../../Utils/profileHttp";
+import AddButtonPost from "../addButtonPost/AddButtonPost";
+import PostsCounter from "../postsCounter/PostsCounter";
+import { useGetOtherName } from "../../../../Utils/profileHttp";
 
 export default function AvatarProfile({ userId }: { userId?: string }) {
   const isDark = useAppSelector((state) => state.theme.state);
@@ -27,6 +27,7 @@ export default function AvatarProfile({ userId }: { userId?: string }) {
   return (
     <>
         <div
+        data-testid = 'avatar-cotainer'
           className={
             isDark ? `${style.avatarDark} ${style.avatar}` : `${style.avatar}`
           }
@@ -42,7 +43,7 @@ export default function AvatarProfile({ userId }: { userId?: string }) {
             preview={false}
           />
           <div className={style.name}>
-            <p className={style.names}>
+            <p data-testid ='names' className={style.names}>
               {userId ? otherName?.firstName : firstName}
               <span> &nbsp;</span>
               {userId ? otherName?.lastName : lastName}

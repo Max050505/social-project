@@ -10,8 +10,8 @@ import { Image } from "antd";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-
-import PostsAndLikes from "../ProfileElement/Header/PostsAndLikes";
+import Modal from "../../UI/Modal";
+import PostsAndLikes from "../ProfileElement/Header/postsAndLikes/PostsAndLikes";
 export default function MainElement() {
   const { data: posts, isLoading } = useGetFriendsPosts();
   const { data: likedPostIds = [] } = useUserLikedPostIds();
@@ -54,6 +54,11 @@ export default function MainElement() {
                 onToggleLike={handlePutLike}
                 className={style.post}
               />
+              {isVisible !== null && (
+  <Modal onClose={() => setIsVisible(null)}>
+    <img src={post.images[isVisible]} alt="preview" />
+  </Modal>
+)}
             </div>
           ))}
         </ul>

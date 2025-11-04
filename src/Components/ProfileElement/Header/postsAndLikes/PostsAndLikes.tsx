@@ -1,10 +1,10 @@
 import { HeartOutlined } from "@ant-design/icons";
 import { Image } from "antd";
 import { MouseEvent } from "react";
-import postStyle from "./postList.module.scss";
+import postStyle from '../postList/postList.module.scss'
 import likeStyle from "./PostsAndLikes.module.scss";
-import ButtonImage from "../UI/ButtonImage";
-import { useIsPostLiked } from "../../../Utils/profileHttp";
+import ButtonImage from "../../UI/ButtonImage";
+
 
 type PostItem = {
   id: string;
@@ -40,6 +40,7 @@ export default function PostsAndLikes({
               className={className}
               onImageClick={onImageClick}
               onToggleLike={onToggleLike}
+              likedPostIds={likedPostIds}
             />
           );
         })}
@@ -52,15 +53,17 @@ function PostItemWithLike({
   index, 
   className, 
   onImageClick, 
-  onToggleLike 
+  onToggleLike,
+  likedPostIds
 }: {
   item: PostItem;
   index: number;
   className: string;
   onImageClick: (index: number) => void;
   onToggleLike: (postId: string, isLiked: boolean, ownerUid: string) => void;
+  likedPostIds: string[];
 }) {
-  const { data: isLiked = false } = useIsPostLiked(item.id, item.ownerUid);
+  const isLiked = likedPostIds.includes(item.id);
 
   return (
     <li className={className}>

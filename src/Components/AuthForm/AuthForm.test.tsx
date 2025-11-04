@@ -6,7 +6,7 @@ import CustomRender from "../../Utils/CustomRender";
 import { signInUser } from "../../Utils/authService";
 import { Route, Routes } from "react-router-dom";
 import RegistrationPage from "../../Pages/RegistrationPage";
-import AuthenticationPage from "../../Pages/AuthenticationPage";
+
 
 vi.mock("../../Utils/authService", async () => {
   const actual = await vi.importActual<typeof import("../../Utils/authService")>(
