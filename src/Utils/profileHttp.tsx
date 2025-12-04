@@ -17,7 +17,7 @@ import {
   deleteDoc,
   doc,
   setDoc,
-
+  collectionGroup,
   updateDoc,
   increment,
  
@@ -367,7 +367,22 @@ export const useUserLikedPostIds = () => {
     enabled: !!user && !loading,
     queryFn: async () => {
       if (!user) throw new Error("No authenticated user");
-      return [] as string[];
+
+      const postsCollectionsSnap = await getDocs(
+        collectionGroup(db, "likes")
+      );
+
+      const likedPostIds: string[] = [];
+
+      postsCollectionsSnap.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.userId === user.uid) {
+          const postId = docSnap.ref.parent.parent?.id;
+          if (postId) likedPostIds.push(postId);
+        }
+      });
+
+      return likedPostIds;
     },
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
