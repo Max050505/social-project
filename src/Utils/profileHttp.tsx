@@ -50,7 +50,7 @@ export const fetchPost = () => {
       const storagePath = snapshot.ref.fullPath;
       const downloadURL = await getDownloadURL(snapshot.ref);
       await addDoc(collection(db, "posts", user.uid, "items"), {
-        avatar: avatar?.downloadURL,
+        
         authorFullName: authorFullName?.fullNameToLowerCase,
         storagePath,
         downloadURL,
