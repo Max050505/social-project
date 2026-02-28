@@ -43,7 +43,6 @@ export const fetchPost = () => {
         `images/Posts/${user.uid}/${timestamp}_${file.name}`
       );
       const snapshot = await uploadBytes(storageRef, file);
-      const snapAvatar = await getDoc(doc(db, "avatars", user.uid));
       const snapAuthorFullName = await getDoc(doc(db, "UsersName", user.uid));
       const authorFullName = snapAuthorFullName.data();
       const storagePath = snapshot.ref.fullPath;
